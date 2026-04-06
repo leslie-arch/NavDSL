@@ -1,0 +1,1211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2026-04-04 Sat 15:33 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>arch-1</title>
+<meta name="author" content="Leslie He" />
+<meta name="generator" content="Org Mode" />
+<style type="text/css">
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">arch-1</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org90b4ff7">1. FOL Nav-DSL</a>
+<ul>
+<li><a href="#org9f7884f">1.1. Nav-DSL 谓词表定义 (Predicate Table)</a></li>
+<li><a href="#orgcb28aa5">1.2. DSL 语法结构设计 (Syntax Structure)</a>
+<ul>
+<li><a href="#orga282f17">1.2.1. 基于 LLM 的语义-逻辑翻译机制</a></li>
+</ul>
+</li>
+<li><a href="#org02b1d29">1.3. 语义-逻辑翻译示例 (Semantic-to-Logic Mapping)</a></li>
+<li><a href="#orgbec5137">1.4. 实验数据</a>
+<ul>
+<li><a href="#org6b3ca5b">1.4.1. 实验指标定义 (Metrics)</a></li>
+<li><a href="#org66baf43">1.4.2. 实验方案 (Experimental Protocol)</a></li>
+<li><a href="#org36d3d7f">1.4.3. Nav-DSL 实验数据集模板-&#x2014;语义-逻辑映射对照表</a></li>
+<li><a href="#org705bbf7">1.4.4. System Prompt</a></li>
+<li><a href="#orgb399d4c">1.4.5. LLM 逻辑纠错反馈 Prompt (Self-Correction Prompt)</a></li>
+<li><a href="#org331d6af">1.4.6. 实验图表清单 (The Visual Evidence)</a></li>
+<li><a href="#org65efcf8">1.4.7. 实验环节：如何自动化生成 `{logical<sub>violation</sub><sub>description</sub>}`？</a></li>
+</ul>
+</li>
+<li><a href="#orgeef68a0">1.5. 创新性：</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org90b4ff7" class="outline-2">
+<h2 id="org90b4ff7"><span class="section-number-2">1.</span> FOL Nav-DSL</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Habitat 认知导航可结合的研究热点
+</p>
+<ol class="org-ol">
+<li>语义场景图 (3D Scene Graphs) 与 Z3 的结合</li>
+</ol>
+<p>
+目前 Habitat 领域的热点是将非结构化的点云转化为分层语义场景图 (Hierarchical 3D Scene Graphs)。结合点： 场景图中的“节点”（房间、家具、物体）和“关系”（在&#x2026;里面、靠近、连接）可以直接映射为你 DSL 中的谓词 (Predicates)。价值： 你不需要自己写视觉算法去提取 At(robot, kitchen)，你可以利用成熟的场景图算法（如 Hydra 或 ConceptGraphs）作为 Z3 的“事实输入层”。
+</p>
+<ol class="org-ol">
+<li>具身重排任务 (Rearrangement Tasks)</li>
+</ol>
+<p>
+这是 Habitat 3.0 后的核心挑战：机器人不仅要导航，还要移动物体。结合点： 重排任务涉及复杂的长程因果链（例如：为了把牛奶放进冰箱，必须先放下手中的面包，再打开冰箱门）。价值： 这正是 Z3 的强项。你可以将重排任务中的“状态改变”作为 Z3 的约束，验证 LLM 生成的搬运指令序列是否物理可行。
+</p>
+<ol class="org-ol">
+<li>人机协作与社交约束 (Social Navigation)</li>
+</ol>
+<p>
+Habitat 3.0 引入了类人智能体。结合点： 在导航中加入社交逻辑约束。例如，Z3 约束：Implies(Moving(robot), Distance(robot, human) &gt; 1.5m)。价值： 这能将你的研究从单纯的“逻辑导航”提升到“安全可靠的社会机器人”高度。
+</p>
+</div>
+<div id="outline-container-org9f7884f" class="outline-3">
+<h3 id="org9f7884f"><span class="section-number-3">1.1.</span> Nav-DSL 谓词表定义 (Predicate Table)</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+谓词是描述环境状态和任务约束的基本单元。
+</p>
+
+<p>
+A. 状态谓词 (State Predicates) — 描述“是什么”
+</p>
+
+<p>
+静态环境谓词 (Static Environment Predicates)用于描述不随动作轻易改变的环境属性。
+</p>
+<ul class="org-ul">
+<li>\(Is(o, a)\): 物体 \(o\) 具有属性 \(a\)（如：Is(door<sub>1</sub>, Locked)）。</li>
+<li>\(Connected(l_1, l_2, d)\): 位置 \(l_1\) 与 \(l_2\) 通过通道 \(d\) 相连（如：门或走廊）。</li>
+<li>\(Located(o, l)\): 物体 \(o\) 的初始坐标或区域位于 \(l\)。</li>
+</ul>
+
+<p>
+动作状态谓词(Dynamic State Predicates)用于描述随机器人动作演变的状态，抽象为时间步索引的谓词集合，是 Z3 检查时序逻辑的核心。
+</p>
+<ul class="org-ul">
+<li>\(At(r, l, t)\): 在时间步 \(t\)，机器人 \(r\) 位于位置 \(l\)。 <b>空间谓词</b></li>
+<li>\(Holding(r, o, t)\): 在时间步 \(t\)，机器人 \(r\) 持有物体 \(o\)。 <b>交互谓词</b></li>
+<li>\(Opened(d, t)\): 在时间步 \(t\)，通道 \(d\) 处于开启状态。 <b>状态谓词</b></li>
+</ul>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">谓词 (Predicate)</td>
+<td class="org-left">语义说明 (Semantics)</td>
+<td class="org-left">Z3 类型定义</td>
+</tr>
+
+<tr>
+<td class="org-left">At(robot, location)</td>
+<td class="org-left">机器人当前处于位置 location</td>
+<td class="org-left">Function(Object, Location, Bool)</td>
+</tr>
+
+<tr>
+<td class="org-left">In(object, container)</td>
+<td class="org-left">物体 object 在容器 container 内</td>
+<td class="org-left">Function(Object, Object, Bool)</td>
+</tr>
+
+<tr>
+<td class="org-left">Is(object, attribute)</td>
+<td class="org-left">物体具有某种属性（如 hot, red, locked）</td>
+<td class="org-left">Function(Object, Attribute, Bool)</td>
+</tr>
+
+<tr>
+<td class="org-left">Connected(loc1, loc2)</td>
+<td class="org-left">位置 1 和位置 2 之间物理连通</td>
+<td class="org-left">Function(Location, Location, Bool)</td>
+</tr>
+
+<tr>
+<td class="org-left">Holding(robot, object)</td>
+<td class="org-left">机器人当前抓取着物体 object</td>
+<td class="org-left">Function(Object, Bool)</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+B. 动作算子 (Action Operators) — 描述“做什么”
+</p>
+
+<p>
+为了让 Z3 能够进行推理，每个动作由前提条件 (Pre-condition) 和 效应 (Effect) 组成。
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">动作算子 Act(args)</th>
+<th scope="col" class="org-left">前提条件 Pre(Act)</th>
+<th scope="col" class="org-left">效应 Eff(Act)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">\(Move(r, l_1, l_2, t)\)</td>
+<td class="org-left">\(At(r, l_1, t) \wedge Connected(l_1, l_2, d) \wedge Opened(d, t)\)</td>
+<td class="org-left">\(At(r, l_2, t+1) \wedge \neg At(r, l_1, t+1)\)</td>
+</tr>
+
+<tr>
+<td class="org-left">\(Pick(r, o, l, t)\)</td>
+<td class="org-left">\(At(r, l, t) \wedge Located(o, l) \wedge \neg \exists x Holding(r, x, t)\)</td>
+<td class="org-left">\(Holding(r, o, t+1)\)</td>
+</tr>
+
+<tr>
+<td class="org-left">\(Unlock(r, d, k, t)\)</td>
+<td class="org-left">\(At(r, l_{door}, t) \wedge Holding(r, k, t) \wedge Is(k, KeyFor\_d)\)</td>
+<td class="org-left">\(\neg Is(d, Locked) \wedge Opened(d, t+1)\)</td>
+</tr>
+</tbody>
+</table>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">动作 (Action)</th>
+<th scope="col" class="org-left">参数</th>
+<th scope="col" class="org-left">前提条件 (Pre-conditions)</th>
+<th scope="col" class="org-left">效应 (Effects)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Goto</td>
+<td class="org-left">(target<sub>loc</sub>)</td>
+<td class="org-left">Connected(current<sub>loc</sub>, target<sub>loc</sub>)</td>
+<td class="org-left">At(robot, target<sub>loc</sub>)</td>
+</tr>
+
+<tr>
+<td class="org-left">PickUp</td>
+<td class="org-left">(obj)</td>
+<td class="org-left">At(robot, obj<sub>loc</sub>) ∧ ¬Holding(robot, any)</td>
+<td class="org-left">Holding(robot, obj)</td>
+</tr>
+
+<tr>
+<td class="org-left">Open</td>
+<td class="org-left">(obj)</td>
+<td class="org-left">At(robot, obj<sub>loc</sub>) ∧ Is(obj, unlockable)</td>
+<td class="org-left">Is(obj, opened)</td>
+</tr>
+
+<tr>
+<td class="org-left">Check</td>
+<td class="org-left">(obj, attr)</td>
+<td class="org-left">At(robot, obj<sub>loc</sub>)</td>
+<td class="org-left">Knowledge(Is(obj, attr))</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-orgcb28aa5" class="outline-3">
+<h3 id="orgcb28aa5"><span class="section-number-3">1.2.</span> DSL 语法结构设计 (Syntax Structure)</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+为了让 LLM 能够稳定生成，建议采用 S-表达式 (S-Expression) 或 JSON-Logic 风格。这里推荐 类 Python 表达式，因为它对 Z3Py 最友好。
+</p>
+
+<p>
+A. 任务序列结构一个完整的任务被解析为三个部分：
+</p>
+
+<p>
+Objects: 涉及的实体声明。
+Initial<sub>State</sub>: 环境当前已知的真值。
+Plan<sub>Steps</sub>: LLM 建议的动作链。
+Constraints: 必须满足的硬性逻辑约束。
+</p>
+
+<p>
+B. 形式化语法示例 (Backus-Naur Form, BNF)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-BNF">&lt;Task&gt;        ::= &lt;ObjectDecl&gt; &lt;InitState&gt; &lt;GoalState&gt; &lt;ActionSequence&gt;
+&lt;Action&gt;      ::= &lt;ActionName&gt; "(" &lt;ParameterList&gt; ")"
+&lt;Constraint&gt;  ::= "Require(" &lt;LogicFormula&gt; ")"
+&lt;LogicFormula&gt;::= &lt;Predicate&gt; | "And(" &lt;FormulaList&gt; ")" | "Implies(" &lt;Formula&gt;, &lt;Formula&gt; ")" | "Not(" &lt;Formula&gt; ")"
+</pre>
+</div>
+</div>
+<div id="outline-container-orga282f17" class="outline-4">
+<h4 id="orga282f17"><span class="section-number-4">1.2.1.</span> 基于 LLM 的语义-逻辑翻译机制</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+<b>DSL 语法结构与翻译流程</b>
+需要定义一套 LLM 易于生成且 Z3 易于解析的语法结构（建议采用类似 LISP 表达式 或 Pythonic Predicates）。
+</p>
+
+<p>
+[语义 - 逻辑翻译架构图]
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="orgae3bf3e"></a>2.1 引导式 Prompt 工程<br />
+<div class="outline-text-5" id="text-1-2-1-1">
+<p>
+设计了一种带约束的 Prompt 架构，包含：
+</p>
+
+<p>
+谓词字典约束：强制 LLM 仅能使用预定义的谓词和动作算子。上下文示例（Few-shot）：展示如何处理隐含的逻辑，例如指令“如果门关了就找钥匙”需翻译为条件逻辑分支 If(Locked(d), Then(Search(k)))。
+</p>
+</div>
+</li>
+<li><a id="orgcc614d0"></a>2.2 语法良构性检查<br />
+<div class="outline-text-5" id="text-1-2-1-2">
+<p>
+生成的 DSL 代码通过一个轻量级的 Python 解析器，检查参数类型是否匹配（例如 Move 的参数必须是 Location 类型），确保进入 SMT 求解器的输入具有语法正确性。
+</p>
+
+<p>
+A. 语义解析层 (Semantic Parsing Layer)
+LLM 接收自然语言指令 \(I\)，输出 DSL 序列 $S$：
+</p>
+<ul class="org-ul">
+<li>输入： “去办公室拿蓝色文件夹，如果门锁了，去前台取钥匙。”</li>
+<li><p>
+DSL 输出:
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">Logic Objects Declaration
+</span>Objects<span style="color: #3a81c3;">(</span>robot, office, blue_folder, desk, key, gate<span style="color: #3a81c3;">)</span>
+
+<span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">Sequence of Hypothetical Actions
+</span>Step1: Move<span style="color: #3a81c3;">(</span>robot, hallway, office, gate<span style="color: #3a81c3;">)</span>
+Step2: If<span style="color: #3a81c3;">(</span>Is<span style="color: #6c3163;">(</span>gate, Locked<span style="color: #6c3163;">)</span>, 
+          Then=<span style="color: #6c3163;">[</span>Move<span style="color: #2d9574;">(</span>robot, hallway, reception<span style="color: #2d9574;">)</span>, Pick<span style="color: #2d9574;">(</span>robot, key<span style="color: #2d9574;">)</span>, Move<span style="color: #2d9574;">(</span>robot, reception, office<span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>,
+          Else=<span style="color: #6c3163;">[</span>Continue<span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>
+Step3: Pick<span style="color: #3a81c3;">(</span>robot, blue_folder, office<span style="color: #3a81c3;">)</span>
+</pre>
+</div></li>
+</ul>
+
+<p>
+B. 语法规范约束 (Syntactic Constraints)
+为了保证 LLM 不乱写，你需要在方法论中定义 Well-formedness (良构性)规则：
+</p>
+<ul class="org-ul">
+<li>类型检查： 谓词的参数必须属于已定义的 Objects 集合。</li>
+<li>时序连续性： \(At(r, l, t+1)\) 的前提必须在 \(t\) 时刻有合法的移动动作。</li>
+<li>单手约束： 任何时刻 \(t\)，满足 \(Holding(r, o, t)\) 的 \(o\) 数量 \(\le 1\)。</li>
+</ul>
+</div>
+</li>
+<li><a id="orge218e46"></a>基于 Z3 的形式化验证与真值推演<br />
+<div class="outline-text-5" id="text-1-2-1-3">
+<p>
+系统的“理智大脑（System 2）”，负责对翻译出的逻辑序列进行物理一致性验证。
+</p>
+
+<p>
+3.1 逻辑可满足性建模系统将任务目标（Goal）与当前已知环境状态（Init）编码为 SMT 问题：
+\[\Phi = \text{Init} \wedge \text{Constraints} \wedge \text{Action\_Sequence} \wedge \neg \text{Goal}\]
+利用 Z3 求解器搜索是否存在一个合法的状态演化路径。
+</p>
+</div>
+</li>
+<li><a id="orga9ea61c"></a>融合因果图的动态重规划机制<br />
+<div class="outline-text-5" id="text-1-2-1-4">
+<p>
+在复杂动态环境中，机器人通过感知更新实时修正其因果知识图谱。
+</p>
+
+<ul class="org-ul">
+<li>4.1 因果关联建模</li>
+</ul>
+<p>
+利用因果发现算法维护环境实体间的依赖关系（如：电源开关与灯光亮度、门锁状态与路径连通性）。
+</p>
+<ul class="org-ul">
+<li>4.2 反事实重规划</li>
+</ul>
+<p>
+当执行过程中遭遇意外（如路径被突发障碍堵塞），系统利用因果图进行反事实推理：“如果不走 A 门，是否可以绕过 B 窗？”。
+Z3 重新计算最优备选逻辑链，确保导航任务在动态环境下的稳健性。
+</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org02b1d29" class="outline-3">
+<h3 id="org02b1d29"><span class="section-number-3">1.3.</span> 语义-逻辑翻译示例 (Semantic-to-Logic Mapping)</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+论文实验部分的核心：展示从“人话”到“DSL”的转化。
+</p>
+
+<p>
+自然语言指令： “去厨房拿那个热杯子，如果门锁了就先找钥匙。”
+Nav-DSL 映射结果：
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">1. &#23545;&#35937;&#22768;&#26126;
+</span><span style="color: #715ab1;">Objects</span> = <span style="color: #3a81c3;">[</span>Robot<span style="color: #6c3163;">(</span>r<span style="color: #6c3163;">)</span>, Room<span style="color: #6c3163;">(</span>kitchen<span style="color: #6c3163;">)</span>, Item<span style="color: #6c3163;">(</span>cup<span style="color: #6c3163;">)</span>, Item<span style="color: #6c3163;">(</span>key<span style="color: #6c3163;">)</span>, Door<span style="color: #6c3163;">(</span>d<span style="color: #6c3163;">)</span><span style="color: #3a81c3;">]</span>
+
+<span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">2. &#21021;&#22987;&#30693;&#35782; (Initial Knowledge)
+</span><span style="color: #715ab1;">Init</span> = <span style="color: #3a81c3;">[</span>
+    At<span style="color: #6c3163;">(</span>r, living_room<span style="color: #6c3163;">)</span>,
+    Connected<span style="color: #6c3163;">(</span>living_room, kitchen, via=d<span style="color: #6c3163;">)</span>,
+    Is<span style="color: #6c3163;">(</span>cup, hot<span style="color: #6c3163;">)</span>
+<span style="color: #3a81c3;">]</span>
+
+<span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">3. &#36923;&#36753;&#32422;&#26463; (Constraints / Pre-conditions)
+</span><span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">&#36825;&#19968;&#37096;&#20998;&#26159; Z3 &#30340;&#26680;&#24515;&#65292;&#30001;&#31995;&#32479;&#26681;&#25454; DSL &#24211;&#33258;&#21160;&#34917;&#20840;
+</span><span style="color: #715ab1;">Constraints</span> = <span style="color: #3a81c3;">[</span>
+    <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">&#22914;&#26524;&#38376;&#38145;&#20102;&#65292;&#36827;&#20837;&#21416;&#25151;&#30340;&#21069;&#25552;&#26159;&#24517;&#39035;&#25343;&#30528;&#38053;&#21273;
+</span>    Implies<span style="color: #6c3163;">(</span>And<span style="color: #2d9574;">(</span>Is<span style="color: #67b11d;">(</span>d, locked<span style="color: #67b11d;">)</span>, At<span style="color: #67b11d;">(</span>r, kitchen<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span>, Holding<span style="color: #2d9574;">(</span>r, key<span style="color: #2d9574;">)</span><span style="color: #6c3163;">)</span>,
+    <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">&#25343;&#21040;&#26479;&#23376;&#30340;&#21069;&#25552;&#26159;&#24517;&#39035;&#22312;&#21416;&#25151;&#19988;&#26479;&#23376;&#26159;&#28909;&#30340;
+</span>    Implies<span style="color: #6c3163;">(</span>Holding<span style="color: #2d9574;">(</span>r, cup<span style="color: #2d9574;">)</span>, And<span style="color: #2d9574;">(</span>At<span style="color: #67b11d;">(</span>r, kitchen<span style="color: #67b11d;">)</span>, Is<span style="color: #67b11d;">(</span>cup, hot<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #6c3163;">)</span>
+<span style="color: #3a81c3;">]</span>
+
+<span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">4. LLM &#29983;&#25104;&#30340;&#20505;&#36873;&#35745;&#21010; (Candidate Plan)
+</span><span style="color: #715ab1;">Plan</span> = <span style="color: #3a81c3;">[</span>
+    Goto<span style="color: #6c3163;">(</span>kitchen<span style="color: #6c3163;">)</span>,  <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">&#27492;&#22788;&#33509;&#38376;&#38145;&#19988;&#26080;&#38053;&#21273;&#65292;Z3 &#23558;&#36820;&#22238; UNSAT
+</span>    PickUp<span style="color: #6c3163;">(</span>cup<span style="color: #6c3163;">)</span>
+<span style="color: #3a81c3;">]</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgbec5137" class="outline-3">
+<h3 id="orgbec5137"><span class="section-number-3">1.4.</span> 实验数据</h3>
+<div class="outline-text-3" id="text-1-4">
+</div>
+<div id="outline-container-org6b3ca5b" class="outline-4">
+<h4 id="org6b3ca5b"><span class="section-number-4">1.4.1.</span> 实验指标定义 (Metrics)</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<ol class="org-ol">
+<li>SR (Success Rate): 解析出的 DSL 语法完全正确的比例。</li>
+<li>LV (Logical Validity): 经 Z3 验证，计划在物理逻辑上可达的比例。</li>
+<li>CR (Correction Rate): 经过 Z3 反馈给 LLM 后，第二次修正成功的比例。</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org66baf43" class="outline-4">
+<h4 id="org66baf43"><span class="section-number-4">1.4.2.</span> 实验方案 (Experimental Protocol)</h4>
+<div class="outline-text-4" id="text-1-4-2">
+<p>
+结合 2025-2026 年具身智能顶会（CVPR, ICRA, ICLR）的趋势，建议采用以下方案：
+</p>
+<ol class="org-ol">
+<li>环境与基准设置 (Simulation Setup)
+<ul class="org-ul">
+<li>仿真器： 使用 Habitat 3.0+。重点利用其支持动态物体交互（如门、抽屉、可移动物体）的特性。</li>
+<li>场景库： 选取 HM3D 或 HSSD 中的 50 个复杂户型，确保包含多楼层和封闭空间。</li>
+<li><p>
+数据集构建： 不要只用模板生成的指令。利用 GPT-4 辅助生成 200 条具有“逻辑诡计”的指令，例如
+</p>
+<div class="org-src-container">
+<pre class="src src-comment">"Go fetch the cold soda from the fridge, but don't walk through the living room because the floor is wet." (测试路径约束 + 状态约束)
+</pre>
+</div></li>
+</ul></li>
+<li>评估指标 (Evaluation Metrics)
+除了常规的成功率，增加以下硬指标：
+<ul class="org-ul">
+<li>SR (Success Rate): 任务最终完成的比例。</li>
+<li>SPL (Success weighted by Path Length): 导航效率。</li>
+<li>\(\text{SR}_{formal}\) (Formal Validity Rate): 生成的计划在执行前通过逻辑检查的比例。</li>
+<li>Correction Gain: 引入纠错环节后，成功率提升的绝对值。</li>
+</ul></li>
+<li>消融实验 (Ablation Study)
+必须包含以下变体以证明 Nav-DSL 的必要性：
+<ul class="org-ul">
+<li>w/o Nav-DSL: LLM 直接生成 PDDL 或 Python 代码。</li>
+<li>w/o Z3 Verification: LLM 生成 DSL 后直接执行，不经过求解器。</li>
+<li>w/o Unsat Feedback: 失败后只告诉 LLM "Wrong"，不提供冲突点。</li>
+</ul></li>
+<li>案例研究 (Case Study Visualization)
+在论文中留出半页纸，做一个“逻辑对比图”。展示一个任务：“拿钥匙开门去阳台”。
+<ul class="org-ul">
+<li>Baseline： 机器人直接撞门（因为 LLM 忘了开门）。</li>
+<li>Ours： 展示 Z3 抛出 Unsat: Requires(At(r, balcony), Open(door)) \(\rightarrow\)
+反馈给 LLM \(\rightarrow\) LLM 修正为 [Pick(key), Unlock(door), Move(balcony)]。</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org36d3d7f" class="outline-4">
+<h4 id="org36d3d7f"><span class="section-number-4">1.4.3.</span> Nav-DSL 实验数据集模板-&#x2014;语义-逻辑映射对照表</h4>
+<div class="outline-text-4" id="text-1-4-3">
+<ul class="org-ul">
+<li>难度 1：基础线性任务 (Basic Linear Tasks)
+<ul class="org-ul">
+<li>自然语言指令 (NL)： "Go to the kitchen and fetch the blue mug."</li>
+<li><p>
+语义逻辑解析 (Nav-DSL)：
+</p>
+<div class="org-src-container">
+<pre class="src src-python">Objects<span style="color: #3a81c3;">(</span>robot, kitchen, blue_mug, cupboard<span style="color: #3a81c3;">)</span>
+Goal<span style="color: #3a81c3;">(</span>Holding<span style="color: #6c3163;">(</span>robot, blue_mug, T_final<span style="color: #6c3163;">)</span><span style="color: #3a81c3;">)</span>
+Plan: <span style="color: #3a81c3;">[</span>
+    Move<span style="color: #6c3163;">(</span>robot, current_loc, kitchen, door_1<span style="color: #6c3163;">)</span>,
+    Pick<span style="color: #6c3163;">(</span>robot, blue_mug, kitchen<span style="color: #6c3163;">)</span>
+<span style="color: #3a81c3;">]</span>
+</pre>
+</div></li>
+</ul></li>
+<li>难度 2：条件触发任务 (Conditional Tasks)
+<ul class="org-ul">
+<li>自然语言指令 (NL)： "Go to the office. If the glass door is locked, find the key in the reception first."</li>
+<li><p>
+语义逻辑解析 (Nav-DSL)：
+</p>
+<div class="org-src-container">
+<pre class="src src-python">Objects<span style="color: #3a81c3;">(</span>robot, office, glass_door, reception, key<span style="color: #3a81c3;">)</span>
+<span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">&#26680;&#24515;&#36923;&#36753;&#65306;&#26465;&#20214;&#20998;&#25903;&#32763;&#35793;
+</span>If<span style="color: #3a81c3;">(</span>Property<span style="color: #6c3163;">(</span>glass_door, Locked, t1<span style="color: #6c3163;">)</span>,
+   Then=<span style="color: #6c3163;">[</span>Move<span style="color: #2d9574;">(</span>robot, hallway, reception<span style="color: #2d9574;">)</span>, Pick<span style="color: #2d9574;">(</span>robot, key<span style="color: #2d9574;">)</span>, Move<span style="color: #2d9574;">(</span>robot, reception, office<span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span>,
+   Else=<span style="color: #6c3163;">[</span>Move<span style="color: #2d9574;">(</span>robot, hallway, office<span style="color: #2d9574;">)</span><span style="color: #6c3163;">]</span><span style="color: #3a81c3;">)</span>
+</pre>
+</div></li>
+</ul></li>
+<li>难度 3：含逻辑冲突的陷阱指令 (Conflict Tasks - 用于测试 Z3)</li>
+<li>自然语言指令 (NL)： "Directly enter the storage room and pick up the heavy box,
+then take the small box immediately."</li>
+<li><p>
+语义逻辑解析 (Nav-DSL)：
+</p>
+<div class="org-src-container">
+<pre class="src src-python">Objects<span style="color: #3a81c3;">(</span>robot, storage, heavy_box, small_box<span style="color: #3a81c3;">)</span>
+  Plan: <span style="color: #3a81c3;">[</span>
+    Move<span style="color: #6c3163;">(</span>robot, hallway, storage, door_2<span style="color: #6c3163;">)</span>,
+    Pick<span style="color: #6c3163;">(</span>robot, heavy_box, storage<span style="color: #6c3163;">)</span>,
+    Pick<span style="color: #6c3163;">(</span>robot, small_box, storage<span style="color: #6c3163;">)</span> <span style="color: #2aa1ae; background-color: #ecf3ec;"># </span><span style="color: #2aa1ae; background-color: #ecf3ec;">&#27492;&#22788;&#23558;&#35302;&#21457; Z3 &#20914;&#31361;&#65306;Single-hand Constraint
+</span><span style="color: #3a81c3;">]</span>
+</pre>
+</div></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org705bbf7" class="outline-4">
+<h4 id="org705bbf7"><span class="section-number-4">1.4.4.</span> System Prompt</h4>
+<div class="outline-text-4" id="text-1-4-4">
+<p>
+采用了**“定义-规范-示例”**的结构，能够极大地降低 LLM 输出的随机性，确保生成的 DSL 逻辑表达式可以直接对接 Z3 求解器。
+</p>
+
+<pre class="example" id="orge0a69a1">
+你是一名精通符号逻辑与机器人任务规划的“神经符号转换专家”。你的任务是将用户的自然语言指令（Natural Language）精准地翻译为
+我定义的 Nav-DSL 逻辑表达式。这些表达式随后将被输入 Z3 SMT 求解器进行形式化验证。
+1. Nav-DSL 谓词库 (Predicate Library):
+   At(robot, location, time): 机器人在 $t$ 时刻处于某位置。
+   Holding(robot, object, time): 机器人在 $t$ 时刻持有某物体。
+   Connected(loc1, loc2): 两个位置在物理上连通。
+   Is(object, attribute, time): 物体在 $t$ 时刻具有某种属性（如：Locked, Open, Hot）。
+2. 动作算子规范 (Action Schemas):
+   Move(robot, from_loc, to_loc, time): 移动。
+   Pick(robot, object, loc, time): 抓取（前提：机器人必须在该位置且手部为空）。
+   Unlock(robot, door, key, time): 解锁（前提：机器人持有钥匙且在门前）。
+   Open(robot, container, time): 打开。
+3. 约束规则 (Hard Constraints):
+   单手约束：同一时刻机器人只能 Holding 一个物体。
+   时序连续性：时间步必须从 $t=0$ 开始，连续递增（$t_0, t_1, t_2 \dots$）。
+   逻辑分支：使用 If(Condition, Then=[], Else=[]) 处理不确定性指令。
+4. 输出格式要求:请严格按以下结构输出，不要包含任何解释性文字：
+   #+BEGIN_SRC python
+        # Objects: [实体列表]
+        # Init: [初始状态谓词]
+        # Goal: [目标状态谓词]
+        # Plan: [按时间步排列的动作算子序列]
+   #+END_SRC
+5. 示例 (Few-shot Examples):
+   - 输入: "Go to the kitchen and grab the coffee mug."
+   - 输出:
+     #+BEGIN_SRC python
+     Objects: [robot, hallway, kitchen, coffee_mug]
+     Init: [At(robot, hallway, 0), Connected(hallway, kitchen)]
+     Goal: [Holding(robot, coffee_mug, t_final)]
+     Plan: [
+         Move(robot, hallway, kitchen, 0),
+         Pick(robot, coffee_mug, kitchen, 1)
+     ]
+     #+END_SRC
+</pre>
+</div>
+<ol class="org-ol">
+<li><a id="org1cc9fc0"></a>快速生成论文所需的 Table 1 (LLM Translation Accuracy)：<br />
+<div class="outline-text-5" id="text-1-4-4-1">
+<ol class="org-ol">
+<li>第一步：准备测试集 (Input Sentences)</li>
+</ol>
+<p>
+准备 20-30 个包含不同逻辑挑战的句子，例如：简单: "Go to the office."
+含隐含动作: "Bring me the hot water from the pantry." (隐含了：移动、抓取、移动回来)
+含逻辑陷阱: "Pick up the laptop and the apple at the same time." (用于测试 Z3 是否能拦截单手约束)
+含条件分支: "Go to the lab; if the door is shut, find the key card."
+</p>
+
+<ol class="org-ol">
+<li>第二步：运行翻译并记录结果</li>
+</ol>
+<p>
+将上述句子喂给 LLM。你会发现即便 LLM 翻译出了代码，Z3 在验证时会报出 unsat。论文亮点点拨：你可以写道：“实验发现，即便最先进的 LLM（如 GPT-4）在面对‘隐含约束’时仍会生成违反物理规律的代码，而本文提出的 Nav-DSL 配合 Z3 验证能有效拦截 100% 的此类逻辑错误。”
+</p>
+
+<ol class="org-ol">
+<li><p>
+第三步：数据整理建议表格
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">任务 ID</td>
+<td class="org-left">自然语言指令</td>
+<td class="org-left">LLM 解析是否符合语法</td>
+<td class="org-left">Z3 验证是否通过</td>
+<td class="org-left">失败原因分析</td>
+</tr>
+
+<tr>
+<td class="org-left">T-01</td>
+<td class="org-left">Fetch milk</td>
+<td class="org-left">Yes</td>
+<td class="org-left">Yes</td>
+<td class="org-left">N/A</td>
+</tr>
+
+<tr>
+<td class="org-left">T-02</td>
+<td class="org-left">Pick two items</td>
+<td class="org-left">Yes</td>
+<td class="org-left">No (Unsat)</td>
+<td class="org-left">违反单手约束</td>
+</tr>
+
+<tr>
+<td class="org-left">T-03</td>
+<td class="org-left">Open locked door</td>
+<td class="org-left">Yes</td>
+<td class="org-left">No (Unsat)</td>
+<td class="org-left">缺失拿钥匙动作</td>
+</tr>
+</tbody>
+</table></li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div id="outline-container-orgb399d4c" class="outline-4">
+<h4 id="orgb399d4c"><span class="section-number-4">1.4.5.</span> LLM 逻辑纠错反馈 Prompt (Self-Correction Prompt)</h4>
+<div class="outline-text-4" id="text-1-4-5">
+<p>
+在神经符号架构中，当 Z3 求解器返回 unsat 时，最关键的步骤是将底层逻辑冲突（Unsat Core）转化为高层语义建议。
+</p>
+<pre class="example" id="orgb4384b1">
+Role:
+你是一名具身智能规划调试专家。当前的机器人任务计划由于违反了物理常识或逻辑约束，未通过形式化验证（Z3 Solver）。
+请根据反馈的错误原因，重新优化你的逻辑表达式（Nav-DSL）。
+
+1. 上下文信息 (Context):
+原始指令 (Original Instruction): {user_instruction}
+失败的计划 (Failed DSL Plan): ```python
+{failed_dsl_plan}
+```
+2. 逻辑冲突反馈 (Z3 Feedback):
+&gt; 检测到逻辑矛盾: {logical_violation_description}
+&gt; 例如：动作 `Pick(box2)` 失败，因为在 $t=2$ 时刻机器人已持有了 `box1`，违反了单手约束。
+
+3. 修正要求 (Requirements):
+- **定位冲突**：分析报错中提到的谓词和时间步。
+- **补全动作**：如果是因为缺少前提条件（如没拿钥匙、没开门），请在合适的时间步插入缺失动作。
+- **调整顺序**：如果是因为动作顺序错误，请重新排布时间步。
+- **输出规范**：依然严格遵守 Nav-DSL 格式（Objects, Init, Goal, Plan），不要包含任何解释性文字。
+
+**4. 修正后的输出 (Corrected DSL Output):**
+*(请开始生成修正后的代码)*
+</pre>
+</div>
+</div>
+<div id="outline-container-org331d6af" class="outline-4">
+<h4 id="org331d6af"><span class="section-number-4">1.4.6.</span> 实验图表清单 (The Visual Evidence)</h4>
+<div class="outline-text-4" id="text-1-4-6">
+<ul class="org-ul">
+<li>图 1：任务成功率对比柱状图 (Main Success Metrics)</li>
+</ul>
+<p>
+图表类型： 分组柱状图 (Grouped Bar Chart)。横轴 (X-axis)： 任务难度等级（Level 1: Simple, Level 2: Conditional, Level 3: Logical Traps）。纵轴 (Y-axis)： 成功率 (Success Rate, %)。对比组： 1.  Pure LLM (Zero-shot)
+</p>
+<ol class="org-ol">
+<li>LLM + ReAct (思维链启发式)</li>
+<li>Ours (Nav-DSL + Z3)</li>
+</ol>
+<p>
+设计意图： 展示在简单任务中大家表现差不多，但在 Level 3（逻辑陷阱）中，只有你的方法能通过 Z3 拦截错误并维持高成功率。
+</p>
+
+<ul class="org-ul">
+<li>图 2：失败原因分布堆叠图 (Error Distribution Analysis)</li>
+</ul>
+<p>
+图表类型： 堆叠柱状图 (Stacked Bar Chart)。内容： 对比基线模型与你的模型在失败案例中的构成。失败类别： * 语义解析错误 (Syntactic Error)
+违反物理约束 (Physical Violation) —— 重点！逻辑不一致 (Logical Inconsistency)
+执行超时 (Execution Timeout)
+设计意图： 证明你的方法通过 Z3 验证，消除了所有的“物理约束违反”错误。
+</p>
+
+<p>
+图 3：反馈修正效率折线图 (Feedback Efficiency)
+图表类型： 折线图 (Line Graph)。横轴 (X-axis)： 反馈轮数 (Number of Correction Rounds, 1-5)。纵轴 (Y-axis)： 逻辑通过率 (Logical Validity Rate, %)。对比线：
+</p>
+<ol class="org-ol">
+<li>Vague Text Feedback (模糊文本反馈)</li>
+<li>Unsat-Core Based Feedback (基于逻辑冲突的精准反馈)</li>
+</ol>
+<p>
+设计意图： 展示基于 Unsat Core 的反馈能让 LLM 更快地收敛到正确逻辑，体现“解释性纠错”的价值。
+</p>
+
+<ul class="org-ul">
+<li>图 4：模型规模与性能的权衡散点图 (Efficiency vs. Scalability)</li>
+</ul>
+<p>
+图表类型： 散点图 (Scatter Plot)。横轴 (X-axis)： 推理延迟 (Latency/Time)。纵轴 (Y-axis)： 成功率 (Success Rate)。数据点： 不同尺寸的模型（如 Llama-3-8B + Z3, Qwen-72B, GPT-4o）。设计意图： 证明一个小参数模型配合你的 Z3 框架，可以达到甚至超过超大规模模型的逻辑水平，且成本更低。
+</p>
+</div>
+</div>
+<div id="outline-container-org65efcf8" class="outline-4">
+<h4 id="org65efcf8"><span class="section-number-4">1.4.7.</span> 实验环节：如何自动化生成 `{logical<sub>violation</sub><sub>description</sub>}`？</h4>
+<div class="outline-text-4" id="text-1-4-7">
+<p>
+这是论文中 <b><b>"Explainable Feedback"（可解释反馈）</b></b> 部分的核心贡献。你可以通过一个简单的映射表，将 Z3 的约束翻译成人类能懂的语言：
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Z3 冲突点 (Unsat Core)</th>
+<th scope="col" class="org-left">自动转换出的自然语言描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">`Not(Holding(r, k, t))`</td>
+<td class="org-left">“机器人在尝试解锁前并未持有钥匙。请先执行 Pick(key) 动作。”</td>
+</tr>
+
+<tr>
+<td class="org-left">`And(Holding(r, o1, t), Holding(r, o2, t))`</td>
+<td class="org-left">“检测到机器人同时持有两个物体。请在抓取第二个物体前先放下（Drop）第一个。”</td>
+</tr>
+
+<tr>
+<td class="org-left">`Not(Opened(d, t))`</td>
+<td class="org-left">“机器人在门关闭的状态下尝试通过。请先执行 Open 或 Unlock 动作。”</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+论文中的实验展示案例
+</p>
+<ul class="org-ul">
+<li><b><b>NL Input:</b></b> "Fetch the milk from the fridge."</li>
+<li><b><b>LLM Initial Output:</b></b> `[Move(robot, kitchen), Pick(milk)]` (缺少开门动作)</li>
+<li><b><b>Z3 Verification:</b></b> `UNSAT` (Conflict: Milk is inside fridge, but fridge is closed).</li>
+<li><b><b>Feedback System:</b></b> 调用上述 Prompt，告诉 LLM：“你不能直接抓取封闭容器内的物体，必须先打开冰箱。”</li>
+<li><b><b>LLM Corrected Output:</b></b> `[Move(robot, kitchen), Open(fridge), Pick(milk)]`</li>
+<li><b><b>Final Result:</b></b> `SAT` (Verification Passed).</li>
+</ul>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">数据集名称</td>
+<td class="org-left">适用场景</td>
+<td class="org-left">与你的框架结合点</td>
+</tr>
+
+<tr>
+<td class="org-left">HM3D (Habitat-Matterport 3D)</td>
+<td class="org-left">超大规模、高保真室内场景</td>
+<td class="org-left">用于提取海量的 Connected(loc1, loc2) 逻辑关系，测试导航鲁棒性。</td>
+</tr>
+
+<tr>
+<td class="org-left">HSSD (Habitat Synthetic Scene Dataset)</td>
+<td class="org-left">物体种类极其丰富的合成场景</td>
+<td class="org-left">场景布局更紧凑，适合进行**多物体交互（Pick/Place）**的逻辑验证。</td>
+</tr>
+
+<tr>
+<td class="org-left">Habitat-Web / Ego4D</td>
+<td class="org-left">真实人类行为指令数据</td>
+<td class="org-left">包含大量模糊的自然语言指令，可作为你 LLM-to-DSL 翻译任务的原始输入。</td>
+</tr>
+
+<tr>
+<td class="org-left">ProcTHOR (AI2-THOR 分支)</td>
+<td class="org-left">可程序化生成的逻辑环境</td>
+<td class="org-left">虽然不是 Habitat 原生，但其逻辑一致性极高，非常适合测试 Z3 的边界条件。</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="outline-container-orgeef68a0" class="outline-3">
+<h3 id="orgeef68a0"><span class="section-number-3">1.5.</span> 创新性：</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+确定性映射 (Deterministic Mapping)： 强调你的 DSL 消除了解析中的歧义。例如，“热杯子”被精准映射为 Is(cup, hot)，而不是模糊的视觉特征。因果先验嵌入 (Causal Prior Embedding)： 在 DSL 动作算子中，你预设了物理逻辑（如：只有 Holding 才能 Drop）。这使得 Z3 能够对 LLM 生成的“反物理”计划进行一票否决。双向翻译机制 (Bi-directional Loop)：
+</p>
+<ul class="org-ul">
+<li>正向： 自然语言 -&gt; LLM -&gt; Nav-DSL -&gt; Z3。</li>
+<li>逆向： Z3 (Unsat Core) -&gt; 错误解释器 -&gt; 自然语言反馈 -&gt; LLM 修正。</li>
+</ul>
+
+<p>
+<b>RL 是在“试错”中找概率，Agent Skills 是在“工具箱”里找经验，而你的方法是在“公理体系”</b>
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">维度</th>
+<th scope="col" class="org-left">强化学习 (RL / Deep RL)</th>
+<th scope="col" class="org-left">智能体技能 (Agent Skills / LLM-Planner)</th>
+<th scope="col" class="org-left">本文方法 (Nav-DSL + SMT)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">决策逻辑</td>
+<td class="org-left">概率统计：通过海量采样最大化累计奖励。</td>
+<td class="org-left">经验启发：利用 LLM</td>
+<td class="org-left">形式化推演：基于一阶逻辑的满足性判定。</td>
+</tr>
+
+<tr>
+<td class="org-left">知识表示</td>
+<td class="org-left">黑盒神经网络（权重）。</td>
+<td class="org-left">自然语言描述或行为原语（Primitive）。</td>
+<td class="org-left">结构化谓词（Symbolic Predicates）。</td>
+</tr>
+
+<tr>
+<td class="org-left">验证机制</td>
+<td class="org-left">无。必须执行后才能知道成败。</td>
+<td class="org-left">弱验证。依赖 LLM 的“自我反思”能力。</td>
+<td class="org-left">强验证。在执行前通过 SMT 求解器证明可行性。</td>
+</tr>
+
+<tr>
+<td class="org-left">环境适应</td>
+<td class="org-left">训练场景驱动（泛化性差）。</td>
+<td class="org-left">语义驱动（易产生逻辑幻觉）。</td>
+<td class="org-left">约束驱动（对物理常识有硬性遵循）。</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+本文方法处于 RL 和 Ageng Skills 两种范式的上层逻辑控制位：
+</p>
+<dl class="org-dl">
+<dt>与 Agent Skills 的联系</dt><dd>Nav-DSL 动作算子（如 Pick(obj)）实际上就是 Agent Skills 的“语义接口”。LLM 生成逻辑计划，Z3 验证计划，而最终的执行则是由底层的 Agent Skills（如平滑的抓取控制器）完成。</dd>
+<dt>与 RL 的联系</dt><dd>RL 通常用于训练底层的感知或运动控制（如避障）。本文方法为 RL 提供了一个**“逻辑护栏（Safety Guardrail）”**，即通过 Z3 过滤掉逻辑错误的指令，只让 RL 去执行逻辑上可行的路径。</dd>
+</dl>
+
+<p>
+相比于 RL 的“暴力训练”和 Agent Skills 的“概率盲盒”，Nav-DSL + Z3 的优势体现在以下三个方面：
+</p>
+
+<p>
+A. 可证明的安全性与可行性 (Provable Feasibility)
+</p>
+<ul class="org-ul">
+<li>对比： RL 可能在导航中撞墙千次才学会绕行；LLM 可能会建议机器人“穿过关着的门”。</li>
+<li>优势： 在指令下发给机器人之前，就已经通过 Z3 证明了该动作序列在物理拓扑和前提条件下是**可满足（Satisfiable）**的。这种“先验证再执行”的机制是具身智能走向工业级应用的关键。</li>
+</ul>
+<p>
+B. 零样本的长程逻辑处理能力 (Zero-shot Long-horizon Planning)
+</p>
+<ul class="org-ul">
+<li>对比： 任务链越长，RL 的奖励越稀疏，训练越难收敛；Agent Skills 的 LLM 容易在第 5 步之后忘记第 1 步的约束。</li>
+<li>优势： SMT 求解器处理 10 步甚至 100 步的逻辑链条在计算上是廉价且严谨的。Nav-DSL 能精准捕捉“如果要完成 A，必须先完成 B”这种深层依赖。</li>
+</ul>
+<p>
+C. 基于真值的解释性纠错 (Explainability via Unsat Core)
+</p>
+<ul class="org-ul">
+<li>对比： RL 失败了只会返回一个低分；LLM 失败了可能会一本正经地胡说八道。</li>
+<li>优势： 当 Z3 返回 unsat 时，它能通过 Unsat Core 明确指出：“冲突点在于：你试图打开门 D1，但你并未持有钥匙 K1”。这种基于逻辑事实的反馈比任何统计模型的猜测都更具说服力，也让系统的自纠错变得极度高效。</li>
+</ul>
+</div>
+<ol class="org-ol">
+<li><a id="org121c0e9"></a>Comparison with Existing Paradigms (RL &amp; Skill-based Agents)<br />
+<div class="outline-text-5" id="text-1-5-0-1">
+<p>
+While current embodied AI research primarily relies on Reinforcement Learning (RL) and Skill-based LLM Agents,
+our proposed Nav-DSL + SMT framework introduces a fundamental shift from stochastic association to
+deterministic logical deduction.
+Firstly, unlike Reinforcement Learning, which seeks optimal policies through extensive empirical trial-and-error,
+our method eliminates the need for dense reward engineering and massive sampling. While RL excels in low-level
+reactive control, it lacks the formal guarantees required for high-level task consistency. In contrast, by grounding
+semantic instructions into SMT constraints, our framework ensures that the generated task sequences are provably
+feasible within the defined physical topology before any execution occurs.
+Secondly, compared to Skill-based Agents that sequence behavioral primitives via LLM-based prompting, our approach
+addresses the critical issue of "logical hallucinations." Even the most advanced LLMs often overlook implicit
+pre-conditions (e.g., trying to open a locked door without a key) due to their probabilistic nature. Nav-DSL serves
+as a formal bridge, transforming fluid neural semantics into rigorous symbolic predicates. The integration of the
+Z3 SMT solver allows the system to detect unsatisfiable plans in milliseconds.
+Distinctively, our framework provides explainable failure recovery through Unsat Core tracing. Unlike RL agents
+that return a low scalar reward upon failure, or LLM agents that provide vague linguistic guesses, our system
+pinpoints the exact logical contradiction (e.g., a violation of the single-hand constraint). This feedback
+loop enables a closed-loop refinement of task plans, significantly enhancing the reliability and transparency
+of cognitive navigation in complex, dynamic environments.
+</p>
+</div>
+</li>
+<li><a id="org5a59913"></a>Symbolic Verification vs. Parameter Scaling<br />
+<div class="outline-text-5" id="text-1-5-0-2">
+<p>
+在 2026 年的学术语境下，单纯堆砌模型参数（Scaling Law）已进入边际效用递减期，而**“可验证的具身推理”**正是当前的破局点。
+</p>
+
+<p>
+A Strategic DiscussionA prevailing trend in Embodied AI is the pursuit of "Emergent Reasoning" through the
+continuous scaling of Large Language Model (LLM) parameters. However, our study argues that for cognitive
+navigation in safety-critical environments, incorporating a formal SMT solver (like Z3) is fundamentally
+more robust and efficient than simply increasing model scale.
+</p>
+<ol class="org-ol">
+<li>The Fallacy of Probabilistic Reliability :: &gt; Even as LLMs scale to trillions of parameters, they remain
+stochastic simulators of linguistic patterns. In embodied tasks, a plan that is "\(99\%\) linguistically
+plausible" can be "\(100\%\) physically catastrophic$." For instance, an LLM might generate a visually
+ coherent sequence that violates a subtle temporal constraint, such as \(\neg Holding(r, key, t) \Rightarrow \neg Open(r, door, t+1)\).
+ While scaling may reduce the frequency of such hallucinations, it cannot provide a formal guarantee
+  of their absence. By contrast, our Nav-DSL + Z3 framework treats physical laws as invariants
+   (\(\phi_{inv}\)), ensuring that any plan bypassing the verification layer is logically sound by construction.</li>
+<li>Computational Efficiency and Edge-Case Handling :: &gt; Scaling laws entail massive computational overhead and
+energy consumption, yet LLMs still struggle with "long-tail" logical edge cases. Our approach demonstrates
+ a computational decoupling: we utilize a relatively lightweight LLM for high-level semantic "compilation"
+  and delegate the heavy lifting of combinatorial logic to the SMT solver. The solver’s ability to pinpoint
+   the Unsat Core provides a level of precision in failure diagnosis that neural scaling cannot replicate.
+   Instead of "brute-forcing" logic through parameters, we utilize Symbolic Anchoring to prune the
+   search space, achieving higher reliability with significantly lower inference costs.</li>
+<li>Neuro-Symbolic Synergy in Agentic Workflows :: &gt; By 2026, the transition toward "Agentic" robot frameworks
+necessitates a shift from black-box execution to interpretable orchestration. Our framework positions the
+ LLM as the "Intuitive Brain" and the SMT solver as the "Logical Auditor." This synergy ensures that the
+  agent's autonomy is bounded by a verified safety envelope, a prerequisite for deploying autonomous
+   systems in unpredictable human-centric environments.</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Leslie He</p>
+<p class="date">Created: 2026-04-04 Sat 15:33</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
