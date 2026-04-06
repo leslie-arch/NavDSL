@@ -3,6 +3,8 @@ tb/
 outputs/
 data/*
 
+__pycache__
+
 # start with '/' for files only in root directory
 /*.pt
 /*.log
