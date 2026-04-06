@@ -1,6 +1,6 @@
 docker/
 tb/
-output/
+outputs/
 data/*
 
 # start with '/' for files only in root directory
