@@ -3,5 +3,6 @@ tb/
 output/
 data/*
 
-*.pt
-*.log
+# start with '/' for files only in root directory
+/*.pt
+/*.log
