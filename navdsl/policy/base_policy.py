@@ -20,7 +20,8 @@ class BasePolicy(Policy):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
-        初始化基础策略
+        初始化基础策略.
+
         接受任意参数以兼容不同的子类初始化需求
         """
         super().__init__()
@@ -28,7 +29,7 @@ class BasePolicy(Policy):
     @property
     def should_load_agent_state(self) -> bool:
         """
-        指示是否应加载代理状态
+        指示是否应加载代理状态.
 
         Returns:
             False表示不从检查点加载代理状态
@@ -38,7 +39,7 @@ class BasePolicy(Policy):
     @classmethod
     def from_config(cls, *args: Any, **kwargs: Any) -> Any:
         """
-        从配置创建策略实例的类方法
+        从配置创建策略实例的类方法.
 
         Returns:
             策略实例
@@ -54,7 +55,8 @@ class BasePolicy(Policy):
         deterministic: bool = False,  # 是否使用确定性策略
     ) -> PolicyActionData:
         """
-        根据当前观察决定动作
+        根据当前观察决定动作.
+
         这个基本实现只是简单地向前移动（总是执行动作1）
 
         Args:
@@ -76,21 +78,24 @@ class BasePolicy(Policy):
 
     def to(self, *args: Any, **kwargs: Any) -> None:
         """
-        将模型移动到指定设备的方法
+        将模型移动到指定设备的方法.
+
         这里是空实现，因为基础策略没有可训练参数需要移动
         """
         return
 
     def eval(self) -> None:
         """
-        将模型设置为评估模式
+        将模型设置为评估模式.
+
         这里是空实现，因为基础策略没有需要切换模式的组件
         """
         return
 
     def parameters(self) -> Generator:
         """
-        获取模型参数的生成器
+        获取模型参数的生成器.
+
         这里只生成一个零张量，用于兼容优化器接口
 
         Returns:

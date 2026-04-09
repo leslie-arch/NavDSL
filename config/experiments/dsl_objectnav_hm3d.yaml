@@ -52,7 +52,7 @@ habitat:
   dataset:
     type: ObjectNav-v1
     split: train
-    content_scenes: ["*"]
+    content_scenes: [ "1S7LAXRdDqK" ] # ["*"]
     # 指向 3D 模型 (.glb) 根目录
     scenes_dir: /home/hjk/sshfs_root/dataset/habitat-data/scene_datasets
     # 指向任务定义 (.json.gz) 路径，使用占位符
@@ -62,7 +62,7 @@ habitat_baselines:
   evaluate: False
   eval_ckpt_path_dir: data/dummy_policy.pth
   num_environments: 1
-  load_resume_state_config: True
+  load_resume_state_config: False
 
   torch_gpu_id: 0
   tensorboard_dir: "tb"
@@ -70,9 +70,9 @@ habitat_baselines:
   test_episode_count: -1
   checkpoint_folder: "data/new_checkpoints"
   trainer_name: "dsl"
-  num_updates: 270000
+  num_updates: 100  # 270000
   log_interval: 10
-  num_checkpoints: 100
+  num_checkpoints: 2  # 100
   # Force PyTorch to be single threaded as
   # this improves performance considerably
   force_torch_single_threaded: True

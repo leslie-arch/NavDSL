@@ -17,11 +17,13 @@ from habitat.config.default_structured_configs import register_hydra_plugin
 from habitat_baselines.run import execute_exp
 from hydra.core.config_search_path import ConfigSearchPath
 from hydra.plugins.search_path_plugin import SearchPathPlugin
+
 from omegaconf import DictConfig
 
 # (register sensors, observations, policies, and trainer)
 import navdsl.measurements.traveled_stairs  # noqa: F401
 import navdsl.obs_transformers.resize  # noqa: F401
+import navdsl.config.objectnav_structed_config  # noqa: F401
 import navdsl.policy.action_replay_policy  # noqa: F401
 import navdsl.policy.habitat_policies  # noqa: F401 baseline_registry.register_policy
 import navdsl.utils.navdsl_trainer  # noqa: F401  baseline_registry.register_trainer

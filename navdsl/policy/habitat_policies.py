@@ -1,7 +1,7 @@
 
 # Copyright (c) 2023 Boston Dynamics AI Institute LLC. All rights reserved.
 
-from dataclasses import dataclass
+# from dataclasses import dataclass
 from typing import Any, Dict, Union
 
 import numpy as np
@@ -11,20 +11,20 @@ from frontier_exploration.base_explorer import BaseExplorer
 from habitat.tasks.nav.object_nav_task import ObjectGoalSensor
 from habitat_baselines.common.baseline_registry import baseline_registry
 from habitat_baselines.common.tensor_dict import TensorDict
-from habitat_baselines.config.default_structured_configs import (
-    PolicyConfig,
-    RLConfig
-)
+# from habitat_baselines.config.default_structured_configs import (
+#     RLConfig
+# )
 from habitat_baselines.rl.ppo.policy import PolicyActionData
-from hydra.core.config_store import ConfigStore
+# from hydra.core.config_store import ConfigStore
 from omegaconf import DictConfig
 from torch import Tensor
 
 from navdsl.utils.geometry_utils import xyz_yaw_to_tf_matrix
 from navdsl.vlm.grounding_dino import ObjectDetections
+from navdsl.config.objectnav_structed_config import DSLPolicyConfig
 
 from ..mapping.obstacle_map import ObstacleMap
-from .base_objectnav_policy import BaseObjectNavPolicy, DSLConfig
+from .base_objectnav_policy import BaseObjectNavPolicy  # , DSLConfig
 from .itm_policy import ITMPolicy, ITMPolicyV2, ITMPolicyV3
 
 # Habitat场景数据集HM3D中对象ID到名称的映射列表
@@ -120,7 +120,7 @@ class HabitatMixin:
     @classmethod
     def from_config(cls, config: DictConfig, *args_unused: Any, **kwargs_unused: Any) -> "HabitatMixin":
         """
-        从配置创建HabitatMixin实例的类方法
+        从配置创建HabitatMixin实例的类方法.
 
         Args:
             config: Habitat配置对象
@@ -423,20 +423,20 @@ class HabitatITMPolicyV3(HabitatMixin, ITMPolicyV3):
 #     pass
 
 
-@dataclass
-class DSLPolicyConfig(DSLConfig, PolicyConfig):
-    """
-    视觉语言寻找模型策略配置.
-
-    继承DSLConfig和PolicyConfig，结合两者的配置项
-    """
-
-    pass
-
-
-# 获取配置存储实例
-cs = ConfigStore.instance()
-# 注册DSL策略配置，这个配置将用于创建DSL策略实例，我可以非常快储存我的配置
-cs.store(group="habitat_baselines/rl/policy",
-         name="dsl_policy",
-         node=DSLPolicyConfig)
+# @dataclass
+# class DSLPolicyConfig(DSLConfig, PolicyConfig):
+#     """
+#     视觉语言寻找模型策略配置.
+# 
+#     继承DSLConfig和PolicyConfig，结合两者的配置项
+#     """
+# 
+#     pass
+# 
+# 
+# # 获取配置存储实例
+# cs = ConfigStore.instance()
+# # 注册DSL策略配置，这个配置将用于创建DSL策略实例，我可以非常快储存我的配置
+# cs.store(group="habitat_baselines/rl/policy",
+#          name="dsl_policy",
+#          node=DSLPolicyConfig)
