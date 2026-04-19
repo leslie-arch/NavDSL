@@ -9,6 +9,7 @@ __pycache__
 /*.pt
 /*.log
 
-
+/.venv/
+/uv.lock
 
 !data/.gitkeep

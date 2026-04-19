@@ -1,16 +1,20 @@
 # Copyright (c) 2023 Boston Dynamics AI Institute LLC. All rights reserved.
 
-
 from dataclasses import dataclass, fields
 from typing import Tuple, List
 from habitat_baselines.config.default_structured_configs import (
     PolicyConfig,
 )
+from habitat.config.default_structured_configs import (
+    # SimulatorCameraSensorConfig
+    LabSensorConfig
+)
 from hydra.core.config_store import ConfigStore
 
+from ..sensor import symbolic_fact_sensor  # noqa F401
 
 @dataclass
-class DSLConfig:
+class ObjectNavBaseConfig:
     """
     视觉语言寻找模型的配置类.
 
@@ -47,6 +51,15 @@ class DSLConfig:
         # 返回除"name"外的所有字段名
         return [f.name for f in fields(DSLConfig) if f.name != "name"]
 
+@dataclass
+class DSLConfig(ObjectNavBaseConfig):
+    pass
+
+
+@dataclass
+class VLFMConfig(ObjectNavBaseConfig):
+    pass
+
 
 @dataclass
 class DSLPolicyConfig(DSLConfig, PolicyConfig):
@@ -59,12 +72,46 @@ class DSLPolicyConfig(DSLConfig, PolicyConfig):
     pass
 
 
+@dataclass
+class VLFMPolicyConfig(VLFMConfig, PolicyConfig):
+    """
+    视觉语言寻找模型策略配置
+    继承VLFMConfig和PolicyConfig，结合两者的配置项
+    """
+    pass
+
+
+@dataclass
+class HabitatSymbolicFactSensorConfig(LabSensorConfig):
+    r"""
+    For Object Navigation tasks only. Generates a discrete observation containing
+    the id of the goal object for the episode.
+
+    :property goal_spec: A string that can take the value TASK_CATEGORY_ID or OBJECT_ID. If the value is TASK_CATEGORY_ID, then the observation will be the id of the `episode.object_category` attribute, if the value is OBJECT_ID, then the observation will be the id of the first goal object.
+    :property goal_spec_max_val: If the `goal_spec` is OBJECT_ID, then `goal_spec_max_val` is the total number of different objects that can be goals. Note that this value must be greater than the largest episode goal category id.
+    """
+    type: str = "HabitatSymbolicFactSensor"
+    goal_spec: str = "TASK_CATEGORY_ID"
+    goal_spec_max_val: int = 50
+
+
 # 获取配置存储实例
 cs = ConfigStore.instance()
-# 注册基础DSL配置
-cs.store(group="policy", name="dsl_config_base", node=DSLConfig())
 
-# 注册DSL策略配置，这个配置将用于创建DSL策略实例，我可以非常快储存我的配置
+# 注册语义传感器
+cs.store(package="habitat.task.lab_sensors.symbolic_fact_sensor",
+         group="habitat/task/lab_sensors",
+         name="symbolic_fact_sensor",
+         node=HabitatSymbolicFactSensorConfig)
+
+# 注册基础VLFM配置及策略
+cs.store(group="policy", name="vlfm_config_base", node=VLFMConfig())
+cs.store(group="habitat_baselines/rl/policy",
+         name="vlfm_policy",
+         node=VLFMPolicyConfig)
+
+# 注册基础DSL配置及策略
+cs.store(group="policy", name="dsl_config_base", node=DSLConfig())
 cs.store(group="habitat_baselines/rl/policy",
          name="dsl_policy",
          node=DSLPolicyConfig)

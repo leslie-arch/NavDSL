@@ -24,9 +24,13 @@ from omegaconf import DictConfig
 import navdsl.measurements.traveled_stairs  # noqa: F401
 import navdsl.obs_transformers.resize  # noqa: F401
 import navdsl.config.objectnav_structed_config  # noqa: F401
+
 import navdsl.policy.action_replay_policy  # noqa: F401
 import navdsl.policy.habitat_policies  # noqa: F401 baseline_registry.register_policy
-import navdsl.utils.navdsl_trainer  # noqa: F401  baseline_registry.register_trainer
+# import navdsl.utils.vlfm_trainer  # noqa: F401  baseline_registry.register_trainer
+# import navdsl.utils.dsl_trainer  # noqa: F401  baseline_registry.register_trainer
+import navdsl.utils
+# import navdsl.sensor.symbolic_fact_sensor  # noqa: F401
 
 
 class HabitatConfigPlugin(SearchPathPlugin):

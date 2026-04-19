@@ -6,57 +6,27 @@ defaults:
   - /habitat_baselines: habitat_baselines_rl_config_base
   - /benchmark/nav/objectnav: objectnav_hm3d
   - /habitat/task/lab_sensors:
-      - base_explorer
-      - compass_sensor
-      - gps_sensor
-      - heading_sensor
-      - frontier_sensor
+    - base_explorer
+    - compass_sensor
+    - gps_sensor
+    - heading_sensor
+    - frontier_sensor
   - /habitat/task/measurements:
     - frontier_exploration_map
     - traveled_stairs
-  - /habitat_baselines/rl/policy/: dsl_policy
+  # 下面语法没问题，但路径越深，Hydra 越容易在中间节点（如 main_agent）处理上出现歧义。
+  # 如果识别不到父节点的 Schema，直接选择用“纯字典”重写整个分支。一旦重写，原生字段就会像被“格式化”一样消失。
+  # @ 语法像手术刀，切入 Dict（容器）是常规操作，但切入 Object（对象）内部则会破坏对象的完整性
+  # 如果是 Dict 成员（如 Policy, Measurement, Sensor）：使用 @ 注入是安全的 (如dsl_policy)
+  # 如果是 Object 属性（如 Agent 的某个参数）：禁止使用 @ 注入，直接在 YAML 下方写。
+  #  - /habitat/simulator/sim_sensors@habitat.simulator.agents.main_agent.sim_sensors.symbolic_fact_sensor: symbolic_fact_sensor
+  - /habitat/task/lab_sensors@habitat.task.lab_sensors.symbolic_fact_sensor: symbolic_fact_sensor
+  - /habitat_baselines/rl/policy@habitat_baselines.rl.policy.dsl_policy: dsl_policy
+  # 下面这种写法，"/habitat_baselines/rl/policy/"最后的这个'/'一定要有
+  # 有斜杠被解释为“在 policy 路径下添加/插入一个名为 dsl_policy 的条目”
+  # 否则，Hydra 将其解释为“将整个 policy 组重定向或赋值为 dsl_policy”
+  # - /habitat_baselines/rl/policy/: dsl_policy
   - _self_
-
-habitat:
-  simulator:
-    debug_render: True
-    scene_dataset: /home/hjk/sshfs_root/dataset/habitat-data/scene_datasets/hm3d_v0.2/train/hm3d_annotated_train_basis.scene_dataset_config.json
-    agents:
-      main_agent:
-        sim_sensors:
-          rgb_sensor:
-            height: 480
-            width: 640
-          depth_sensor:
-            height: 480
-            width: 640
-          # Ensure this block exists and isn't empty
-          semantic_sensor:
-            type: HabitatSimSemanticSensor
-            height: 480
-            width: 640
-  environment:
-    iterator_options:
-      max_scene_repeat_steps: 50000
-  task:
-    success_reward: 2.5 
-    slack_reward: -1e-3
-    lab_sensors:
-      base_explorer:
-        turn_angle: 30
-    measurements:
-      frontier_exploration_map:
-        draw_goal_aabbs: False
-  # habitat.core.dataset.Dataset
-  # @registry.register_dataset(name="MyCustomDataset-v1")
-  dataset:
-    type: ObjectNav-v1
-    split: train
-    content_scenes: [ "1S7LAXRdDqK" ] # ["*"]
-    # 指向 3D 模型 (.glb) 根目录
-    scenes_dir: /home/hjk/sshfs_root/dataset/habitat-data/scene_datasets
-    # 指向任务定义 (.json.gz) 路径，使用占位符
-    data_path: /home/hjk/sshfs_root/dataset/habitat-data/datasets/objectnav/hm3d/v2/objectnav_hm3d_v2/{split}/{split}.json.gz
 
 habitat_baselines:
   evaluate: False
@@ -80,15 +50,15 @@ habitat_baselines:
   eval:
     split: "val"
 
+    #在 Habitat-Lab 0.3.3 的 RLConfig 定义中，policy 被定义为一个字典（Map），而不是一个单一的对象。
+    #当试图在 YAML 中直接修改 habitat_baselines.rl.policy.name 时，
+    #Hydra 认为你是在向这个字典里添加一个 Key 叫 "name" 的配置项。
+    #根据约束，这个配置项的 Value 必须是一个 PolicyConfig 对象，而你给的是字符串 "HabitatITMPolicy"，所以报错。
+    #由于 policy 是一个字典，注册的 dsl_policy 实际上是这个字典里的一个“成员”。你需要先进入这个成员，再修改它的属性。
   rl:
-    policy:
-      #在 Habitat-Lab 0.3.3 的 RLConfig 定义中，policy 被定义为一个字典（Map），而不是一个单一的对象。
-      #当试图在 YAML 中直接修改 habitat_baselines.rl.policy.name 时，
-      #Hydra 认为你是在向这个字典里添加一个 Key 叫 "name" 的配置项。
-      #根据约束，这个配置项的 Value 必须是一个 PolicyConfig 对象，而你给的是字符串 "HabitatITMPolicy"，所以报错。
-      #由于 policy 是一个字典，你注册的 dsl_policy 实际上是这个字典里的一个“成员”。你需要先进入这个成员，再修改它的属性。
-      dsl_policy:
-        name: "HabitatITMPolicy"
+    # policy:
+    #   dsl_policy:
+    #     name: "HabitatITMPolicy"
 
     ppo:
       # ppo params
@@ -131,3 +101,48 @@ habitat_baselines:
       backbone: resnet50
       rnn_type: LSTM
       num_recurrent_layers: 2
+
+habitat:
+  simulator:
+    debug_render: True
+    scene_dataset: /home/hjk/sshfs_root/dataset/habitat-data/scene_datasets/hm3d_v0.2/train/hm3d_annotated_train_basis.scene_dataset_config.json
+    agents:
+      main_agent:
+        sim_sensors:
+          rgb_sensor:
+            height: 480
+            width: 640
+          depth_sensor:
+            height: 480
+            width: 640
+          # Ensure this block exists and isn't empty
+          semantic_sensor:
+            type: HabitatSimSemanticSensor
+            height: 480
+            width: 640
+          # symbolic_fact_sensor:
+          #   type: HabitatSimSymbolicFactSensor
+          #   height: 480
+          #   width: 640
+  environment:
+    iterator_options:
+      max_scene_repeat_steps: 50000
+  task:
+    success_reward: 2.5
+    slack_reward: -1e-3
+    lab_sensors:
+      base_explorer:
+        turn_angle: 30
+    measurements:
+      frontier_exploration_map:
+        draw_goal_aabbs: False
+  # habitat.core.dataset.Dataset
+  # @registry.register_dataset(name="MyCustomDataset-v1")
+  dataset:
+    type: ObjectNav-v1
+    split: train
+    content_scenes: [ "1S7LAXRdDqK" ] # ["*"]
+    # 指向 3D 模型 (.glb) 根目录
+    scenes_dir: /home/hjk/sshfs_root/dataset/habitat-data/scene_datasets
+    # 指向任务定义 (.json.gz) 路径，使用占位符
+    data_path: /home/hjk/sshfs_root/dataset/habitat-data/datasets/objectnav/hm3d/v2/objectnav_hm3d_v2/{split}/{split}.json.gz
