@@ -1,0 +1,74 @@
+hm3d/train/hm3d_annotated_train_basis.scene_dataset_config.json
+
+KeySet for a JSON.Object{String, Any} with 4 entries. Keys:
+  "stages"
+  "objects"
+  "light_setups"
+  "scene_instances"
+
+length(annos["scene_instances"]["paths"][".json"])
+145
+
+annos["scene_instances"]["paths"][".json"]
+145-element Vector{Any}:
+ "00006-HkseAnWCgqk/*.basis.scene_instance.json"
+ "00009-vLpv2VX547B/*.basis.scene_instance.json"
+ "00016-qk9eeNeR4vw/*.basis.scene_instance.json"
+ "00017-oEPjPNSPmzL/*.basis.scene_instance.json"
+ ...
+ ...
+ ...
+
+annos["stages"]["paths"][".glb"]
+145-element Vector{Any}:
+ "00006-HkseAnWCgqk/*.basis.glb"
+ "00009-vLpv2VX547B/*.basis.glb"
+ "00016-qk9eeNeR4vw/*.basis.glb"
+
+
+keys(annos["stages"]["default_attributes"])
+KeySet for a JSON.Object{String, Any} with 7 entries. Keys:
+  "shader_type"
+  "up"
+  "front"
+  "origin"
+  "semantic_descriptor_filename"
+  "semantic_asset"
+  "has_semantic_textures"
+
+keys(annos["stages"]["default_attributes"]["semantic_descriptor_filename"])
+Base.EachStringIndex{String}("%%CONFIG_NAME_AS_ASSET_FILENAME%%.semantic.txt")
+
+keys(annos["stages"]["default_attributes"]["semantic_asset"])
+Base.EachStringIndex{String}("%%CONFIG_NAME_AS_ASSET_FILENAME%%.semantic.glb")
+
+
+
+
+datasets/objectnav/hm3d/v2/objectnav_hm3d_v2/train/1S7LAXRdDqK.json
+keys(annos)
+KeySet for a JSON.Object{String, Any} with 4 entries. Keys:
+  "goals_by_category"
+  "episodes"
+  "category_to_task_category_id"
+  "category_to_scene_annotation_category_id"
+
+annos["episodes"][1]
+JSON.Object{String, Any} with 11 entries:
+  "episode_id"                  => "0"
+  "scene_id"                    => "hm3d_v0.2/train/00744-1S7LAXRdDqK/1S7LAXRdDqK.basis.glb"
+  "scene_dataset_config"        => "./data/scene_datasets/hm3d_v0.2/hm3d_annotated_basis.scene_dataset_config.json"
+  "additional_obj_config_paths" => Any[]
+  "start_position"              => Any[-8.75137, 0.0416, -0.78978]
+  "start_rotation"              => Any[0, 0.29147, 0, 0.95658]
+  "info"                        => Object{String, Any}("geodesic_distance"=>1.72036, "euclidean_distance"=>1.60948, "closest_goal_object_id"=>102)
+  "goals"                       => Any[]
+  "start_room"                  => nothing
+  "shortest_paths"              => nothing
+  "object_category"             => "plant"
+
+/home/hjk/dataset/scene_datasets
+{'episode_id': '4', 'scene_id': 'hm3d_v0.2/train/00712-HZ2iMMBsBQ9/HZ2iMMBsBQ9.basis.glb', 'scene_dataset_config': './data/scene_datasets/hm3d_v0.2/hm3d_annotated_basis.scene_dataset_config.json', 'additional_obj_config_paths': [], 'start_position': [7.17728, 0.04644, 0.88394], 'start_rotation': [0, 0.821, 0, 0.57093], 'info': {'geodesic_distance': 3.03573, 'euclidean_distance': 2.88471, 'closest_goal_object_id': 21}, 'goals': [], 'start_room': None, 'shortest_paths': None, 'object_category': 'chair'}
+
+hm3d_annotated_train_basis.scene_dataset_config.json
+hm3d_annotated_train_basis.scene_dataset_config.json

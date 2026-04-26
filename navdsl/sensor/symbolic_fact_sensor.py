@@ -70,7 +70,7 @@ class SymbolicFactSensor(Sensor, metaclass=abc.ABCMeta):
 class HabitatSymbolicFactSensor(Sensor):
     """把 Habitat 的底层 3D 语义数据，抽离为 Z3 能看懂的'逻辑事实'."""
 
-    _get_default_spec = habitat_sim.CameraSensorSpec
+    # _get_default_spec = habitat_sim.SemanticSensorSpec
     sim_sensor_type = habitat_sim.SensorType.SEMANTIC
 
     cls_uuid: str = "symbolic_fact"
@@ -91,44 +91,67 @@ class HabitatSymbolicFactSensor(Sensor):
     def _get_sensor_type(self, *args, **kwargs) -> SensorTypes:
         return SensorTypes.SEMANTIC
 
-    def _get_current_room(self, agent_pos):
-        """利用HM3D的Region属性快速定位当前房间."""
-        for region in self.scene.regions:
-            if region.contains(agent_pos):
-                return region.category.name()
-        return "unknown_area"
+    def _get_default_spec(self):
+        return habitat_sim.SemanticSensorSpec()
 
-    def _get_visible_objects(self, max_dist=5.0):
+    def _get_current_room(self, agent_pos, episode: ObjectGoalNavEpisode):
+        """利用HM3D的Region属性快速定位当前房间."""
+        # print(f"_get_current_room: episode {episode.goals_key}")
+        # 1. 检查语义场景是否真的载入了元数据
+        if self._sim.semantic_scene and len(self._sim.semantic_scene.objects) > 0:
+            print(f"Number of Objects: {len(self._sim.semantic_scene.objects)}\n"
+                  f"Graph node: {self._sim.get_active_scene_graph().get_root_node().object_semantic_id}")
+        print(f"_get_current_room: dataset scenes_path {self._dataset.content_scenes_path}\n"
+              f"episodes: length {len(self._dataset.episodes)} scene_dataset_config: {self._dataset.episodes[1].scene_dataset_config}")
+        print(f"_get_current_room: episode id {episode.episode_id} scene_id {episode.scene_id}, "
+               f"scene dataset config {episode.scene_dataset_config}, "
+               f"info: {episode.info}, initialize template: {self._sim.get_stage_initialization_template()}")
+
+        for obj in self._sim.semantic_scene.objects[:10]:
+            print(f"object --- [{obj.semantic_id}.{obj.id}]: {obj.category.name()}")
+        #     print(f"Number of Regions: {len(self._sim.semantic_scene.regions)}")
+        #     print(f"_get_current_room: semantic_scene {self._sim.semantic_scene}")
+        regions = self._sim.semantic_scene.regions
+        if not len(regions) == 0:
+            print(f"_get_current_room: regions count: {len(regions)}")
+        current_region_name = "unknown_area"
+        for region in regions:
+            if region.aabb.contains(agent_pos):
+                current_region_name = region.category.name()
+
+        return current_region_name
+
+    def _get_visible_objects(self, observations, max_dist=5.0):
         """
         利用 Semantic Observation 提取当前视野内的物体.
 
         比遍历全场景物体更符合“具身感知”
         """
-        # semantic_obs = observations["semantic"]
-        # unique_obj_ids = np.unique(semantic_obs)
-        # 
-        # visible_facts = []
-        # for obj_id in unique_obj_ids:
-        #     # 过滤背景 (ID 0 通常是背景)
-        #     if obj_id == 0:
-        #         continue
-        # 
-        #     # 获取物体元数据
-        #     obj = self.scene.objects[obj_id]
-        #     # 距离过滤
-        #     dist = np.linalg.norm(obj.aabb.center - self._sim.get_agent_state().position)
-        # 
-        #     if dist < max_dist:
-        #         visible_facts.append({
-        #             "id": obj.id,
-        #             "class": obj.category.name(),
-        #             "pos": obj.aabb.center.tolist()
-        #         })
-        # return visible_facts
-        return {}
+        semantic_obs = observations["semantic"]
+        unique_obj_ids = np.unique(semantic_obs)
+        if not np.all(semantic_obs == 0):
+            print(f"_get_visible_objects: find {len(semantic_obs)} visible object(s).")
 
-    def _get_default_spec(self):
-        return habitat_sim.SensorSpec()
+        visible_facts = []
+        for obj_id in unique_obj_ids:
+            # 过滤背景 (ID 0 通常是背景)
+            if obj_id == 0:
+                continue
+
+            # 获取物体元数据
+            obj = self._sim.semantic_scene.objects[obj_id]
+            print(f"_get_visible_objects: ID {obj_id} {obj} at {obj.aabb.center}/{self._sim.get_agent_state().position}")
+            # 距离过滤
+            dist = np.linalg.norm(obj.aabb.center -
+                                  self._sim.get_agent_state().position)
+
+            if dist < max_dist:
+                visible_facts.append({
+                    "id": obj.id,
+                    "class": obj.category.name(),
+                    "pos": obj.aabb.center.tolist()
+                })
+        return visible_facts
 
     def _get_door_status(self, visible_objects):
         """
@@ -154,6 +177,10 @@ class HabitatSymbolicFactSensor(Sensor):
             low=0, high=max_value, shape=sensor_shape, dtype=np.int64
         )
 
+    # observations 是一个正在构建中的观测字典。
+    # 从 Simulator（模拟器层） 传递到 EmbodiedTask（任务层）
+    # 所有底层传感器的原始数据（如 rgb, depth, semantic）封装进一个初始的 observations 字典
+    # 遍历所有注册的 lab_sensors（Task Sensors）,任务层会把这个已经包含模拟器数据的字典作为参数
     def get_observation(
         self,
         observations,
@@ -161,6 +188,19 @@ class HabitatSymbolicFactSensor(Sensor):
         episode: ObjectGoalNavEpisode,
         **kwargs: Any,
     ) -> Optional[np.ndarray]:
+        """读取当前智能体位置及可见物体，转化为 Nav-ASL 事实."""
+        agent_state = self._sim.get_agent_state()
+        current_room = self._get_current_room(agent_state.position, episode)
+        visible_objects = self._get_visible_objects(observations)
+
+        facts = [f"At(robot, {current_room})"]
+        for obj in visible_objects:
+            facts.append(f"Visible({obj.name})")
+
+        door_stats = self._get_door_status(visible_objects)
+        for door in door_stats:
+            if door["is_locked"]:
+                facts.append(f"IsLocked(door_{door['id']})")
 
         category_name = episode.object_category
         if len(episode.goals) == 0:
@@ -191,53 +231,33 @@ class HabitatSymbolicFactSensor(Sensor):
                 "Wrong goal_spec specified for ObjectGoalSensor."
             )
 
-        """读取当前智能体位置及可见物体，转化为 Nav-ASL 事实."""
-        agent_state = self._sim.get_agent_state()
-        # 1. 伪代码：获取当前房间
-        current_room = self._get_current_room(agent_state.position)
-
-        # 2. 伪代码：获取视野内可见物体（通过 Habitat 的 Semantic Scene）
-        visible_objects = self._get_visible_objects()
-
-        # 3. 构造返回给 LLM 的事实列表
-        facts = [f"At(robot, {current_room})"]
-        for obj in visible_objects:
-            facts.append(f"Visible({obj.name})")
-
-        # 4. 门的状态（逻辑示例）
-        door_stats = self._get_door_status(visible_objects)
-        for door in door_stats:
-            if door["is_locked"]:
-                facts.append(f"IsLocked(door_{door['id']})")
-
         return np.random.randint(1, 11, 1)
 
     # def get_observation(self,
     #                     sim_obs: Dict[str, Union[np.ndarray, bool, "Tensor"]]  # noqa: F821
     #                     ) -> VisualObservation:
-    # 
+    #
     #     import json
     #     print(f"get_observation sim_obs:\n{json.dumps(sim_obs)}")
-    # 
+    #
     #     return []
     #     """读取当前智能体位置及可见物体，转化为 Nav-ASL 事实."""
     #     agent_state = self._sim.get_agent_state()
     #     # 1. 伪代码：获取当前房间
     #     current_room = self._get_current_room(agent_state.position)
-    # 
+    #
     #     # 2. 伪代码：获取视野内可见物体（通过 Habitat 的 Semantic Scene）
     #     visible_objects = self._get_visible_objects()
-    # 
+    #
     #     # 3. 构造返回给 LLM 的事实列表
     #     facts = [f"At(robot, {current_room})"]
     #     for obj in visible_objects:
     #         facts.append(f"Visible({obj.name})")
-    # 
+    #
     #     # 4. 门的状态（逻辑示例）
     #     door_stats = self._get_door_status(visible_objects)
     #     for door in door_stats:
     #         if door["is_locked"]:
     #             facts.append(f"IsLocked(door_{door['id']})")
-    # 
+    #
     #     return np.random.randint(1, 11, 1)
-

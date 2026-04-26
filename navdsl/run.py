@@ -25,6 +25,7 @@ import navdsl.measurements.traveled_stairs  # noqa: F401
 import navdsl.obs_transformers.resize  # noqa: F401
 import navdsl.config.objectnav_structed_config  # noqa: F401
 
+from navdsl.data_adapter import object_nav_hm3d_dataset
 import navdsl.policy.action_replay_policy  # noqa: F401
 import navdsl.policy.habitat_policies  # noqa: F401 baseline_registry.register_policy
 # import navdsl.utils.vlfm_trainer  # noqa: F401  baseline_registry.register_trainer
