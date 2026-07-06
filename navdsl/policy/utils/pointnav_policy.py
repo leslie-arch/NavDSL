@@ -1,7 +1,8 @@
 # Copyright (c) 2023 Boston Dynamics AI Institute LLC. All rights reserved.
-
+import sys
+from pathlib import Path
 from typing import Any, Dict, Tuple, Union
-
+from omegaconf import OmegaConf
 import numpy as np
 import torch
 from gym import spaces
@@ -24,9 +25,11 @@ try:
 
         class PointNavResNetTensorOutputPolicy(PointNavResNetPolicy):
             """
-            适用于habitat 0.1.5版本的策略封装类
+            适用于habitat 0.1.5版本的策略封装类.
+
             简化了act方法的返回值，只返回动作和RNN隐藏状态
             """
+
             def act(self, *args: Any, **kwargs: Any) -> Tuple[Tensor, Tensor]:
                 value, action, action_log_probs, rnn_hidden_states = super().act(*args, **kwargs)
                 return action, rnn_hidden_states
@@ -38,9 +41,11 @@ try:
 
         class PointNavResNetTensorOutputPolicy(PointNavResNetPolicy):  # type: ignore
             """
-            适用于较新habitat版本的策略封装类
+            适用于较新habitat版本的策略封装类.
+
             从PolicyActionData中提取动作和RNN隐藏状态
             """
+
             def act(self, *args: Any, **kwargs: Any) -> Tuple[Tensor, Tensor]:
                 policy_actions: "PolicyActionData" = super().act(*args, **kwargs)
                 return policy_actions.actions, policy_actions.rnn_hidden_states
@@ -48,18 +53,133 @@ try:
     HABITAT_BASELINES_AVAILABLE = True
 except ModuleNotFoundError:
     # 如果habitat库不可用，使用本地实现的PointNavResNetPolicy
-    from vlfm.policy.utils.non_habitat_policy.nh_pointnav_policy import (
+    from navdsl.policy.utils.non_habitat_policy.nh_pointnav_policy import (
         PointNavResNetPolicy,
     )
 
     class PointNavResNetTensorOutputPolicy(PointNavResNetPolicy):  # type: ignore
-        """Already outputs a tensor, so no need to convert.
+        """
+        Outputs a tensor, so no need to convert.
 
         已经输出张量格式，无需转换
         """
+
         pass
 
     HABITAT_BASELINES_AVAILABLE = False
+
+
+def load_pointnav_policy(file_path: str) -> PointNavResNetTensorOutputPolicy:
+    """
+    Load a PointNavResNetPolicy policy from a .pth file.
+
+    从.pth文件加载PointNavResNetPolicy策略
+
+    Args:
+        file_path: 包含预训练策略权重的文件路径
+
+    Returns:
+        加载好的PointNavResNetTensorOutputPolicy策略
+    """
+    if HABITAT_BASELINES_AVAILABLE:
+        # 如果habitat库可用，构建观察空间和动作空间
+        obs_space = SpaceDict(
+            {
+                "depth": spaces.Box(low=0.0, high=1.0, shape=(224, 224, 1), dtype=np.float32),  # 深度图空间
+                "pointgoal_with_gps_compass": spaces.Box(
+                    low=np.finfo(np.float32).min,
+                    high=np.finfo(np.float32).max,
+                    shape=(2,),
+                    dtype=np.float32,
+                ),  # 目标位置空间
+            }
+        )
+        action_space = Discrete(4)  # 离散动作空间，4个动作
+        if habitat_version == "0.1.5":
+            # 对于0.1.5版本，使用特定参数初始化策略
+            pointnav_policy = PointNavResNetTensorOutputPolicy(
+                obs_space,
+                action_space,
+                hidden_size=512,
+                num_recurrent_layers=2,
+                rnn_type="LSTM",
+                resnet_baseplanes=32,
+                backbone="resnet18",
+                normalize_visual_inputs=False,
+                obs_transform=None,
+            )
+            # 需要重写视觉编码器，因为它使用的ResNet版本计算压缩大小的方式不同
+            from navdsl.policy.utils.non_habitat_policy import (
+                PointNavResNetNet,
+            )
+
+            # print(pointnav_policy)
+            pointnav_policy.net = PointNavResNetNet(discrete_actions=True, no_fwd_dict=True)
+            # 使用 weights_only=False 以兼容 PyTorch 2.6+ 的安全限制
+            state_dict = torch.load(file_path + ".state_dict", map_location="cpu", weights_only=False)
+        else:
+            # 对于较新版本，使用from_config方法初始化
+            try:
+                config_fpath = Path(file_path).with_suffix(".yaml")
+                config = OmegaConf.load(config_fpath)
+                # 首先尝试显式设置 weights_only=False 以处理 PyTorch 2.6+ 安全限制
+                ckpt_states = torch.load(file_path, map_location="cpu")
+            except TypeError:
+                # 对于较早版本的 PyTorch，weights_only 参数可能不存在
+                ckpt_states = torch.load(file_path, map_location="cpu")
+            pointnav_policy = PointNavResNetTensorOutputPolicy.from_config(config, obs_space, action_space)
+            state_dict = ckpt_states
+        # 加载模型权重
+        pointnav_policy.load_state_dict(state_dict)
+        return pointnav_policy
+
+    else:
+        # 如果habitat不可用，使用本地实现
+        ckpt_dict = torch.load(file_path, map_location="cpu")
+        pointnav_policy = PointNavResNetTensorOutputPolicy()
+        current_state_dict = pointnav_policy.state_dict()
+        # 让旧检查点能够与新代码一起工作（处理键名变化）
+        if "net.prev_action_embedding_cont.bias" not in ckpt_dict.keys():
+            ckpt_dict["net.prev_action_embedding_cont.bias"] = ckpt_dict["net.prev_action_embedding.bias"]
+        if "net.prev_action_embedding_cont.weights" not in ckpt_dict.keys():
+            ckpt_dict["net.prev_action_embedding_cont.weight"] = ckpt_dict["net.prev_action_embedding.weight"]
+
+        # 只加载当前模型中存在的参数
+        pointnav_policy.load_state_dict({k: v for k, v in ckpt_dict.items() if k in current_state_dict})
+        # 打印未加载的键
+        unused_keys = [k for k in ckpt_dict.keys() if k not in current_state_dict]
+        print(f"The following unused keys were not loaded when loading the pointnav policy: {unused_keys}")
+        return pointnav_policy
+
+
+def move_obs_to_device(
+    observations: Dict[str, Any],
+    device: torch.device,
+    unsqueeze: bool = False,
+) -> Dict[str, Tensor]:
+    """Moves observations to the given device, converts numpy arrays to torch tensors.
+
+    将观察数据移至指定设备，并将NumPy数组转换为PyTorch张量
+
+    Args:
+        observations: 观察数据字典
+        device: 目标设备
+        unsqueeze: 是否扩展张量维度
+
+    Returns:
+        转换后的观察数据字典，所有值都是位于指定设备的PyTorch张量
+    """
+    # 将每个字典值中的NumPy数组转换为PyTorch张量
+    for k, v in observations.items():
+        if isinstance(v, np.ndarray):
+            # 根据数据类型选择适当的张量类型
+            tensor_dtype = torch.uint8 if v.dtype == np.uint8 else torch.float32
+            observations[k] = torch.from_numpy(v).to(device=device, dtype=tensor_dtype)
+            # 如果需要，扩展张量维度（常用于添加批次维度）
+            if unsqueeze:
+                observations[k] = observations[k].unsqueeze(0)
+
+    return observations
 
 
 class WrappedPointNavResNetPolicy:
@@ -88,6 +208,7 @@ class WrappedPointNavResNetPolicy:
         """
         if isinstance(device, str):
             device = torch.device(device)  # 将字符串设备名转换为torch.device对象
+        print(f"WrappeedPointNavResNetPolicy: checkpoint {ckpt_path}")
         self.policy = load_pointnav_policy(ckpt_path)  # 加载点导航策略
         self.policy.to(device)  # 将策略移至指定设备
         # 判断是否为离散动作空间
@@ -158,115 +279,6 @@ class WrappedPointNavResNetPolicy:
         self.pointnav_test_recurrent_hidden_states = torch.zeros_like(self.pointnav_test_recurrent_hidden_states)
         self.pointnav_prev_actions = torch.zeros_like(self.pointnav_prev_actions)
 
-
-def load_pointnav_policy(file_path: str) -> PointNavResNetTensorOutputPolicy:
-    """Loads a PointNavResNetPolicy policy from a .pth file.
-
-    从.pth文件加载PointNavResNetPolicy策略
-
-    Args:
-        file_path: 包含预训练策略权重的文件路径
-
-    Returns:
-        加载好的PointNavResNetTensorOutputPolicy策略
-    """
-    if HABITAT_BASELINES_AVAILABLE:
-        # 如果habitat库可用，构建观察空间和动作空间
-        obs_space = SpaceDict(
-            {
-                "depth": spaces.Box(low=0.0, high=1.0, shape=(224, 224, 1), dtype=np.float32),  # 深度图空间
-                "pointgoal_with_gps_compass": spaces.Box(
-                    low=np.finfo(np.float32).min,
-                    high=np.finfo(np.float32).max,
-                    shape=(2,),
-                    dtype=np.float32,
-                ),  # 目标位置空间
-            }
-        )
-        action_space = Discrete(4)  # 离散动作空间，4个动作
-        if habitat_version == "0.1.5":
-            # 对于0.1.5版本，使用特定参数初始化策略
-            pointnav_policy = PointNavResNetTensorOutputPolicy(
-                obs_space,
-                action_space,
-                hidden_size=512,
-                num_recurrent_layers=2,
-                rnn_type="LSTM",
-                resnet_baseplanes=32,
-                backbone="resnet18",
-                normalize_visual_inputs=False,
-                obs_transform=None,
-            )
-            # 需要重写视觉编码器，因为它使用的ResNet版本计算压缩大小的方式不同
-            from vlfm.policy.utils.non_habitat_policy import (
-                PointNavResNetNet,
-            )
-
-            # print(pointnav_policy)
-            pointnav_policy.net = PointNavResNetNet(discrete_actions=True, no_fwd_dict=True)
-            # 使用 weights_only=False 以兼容 PyTorch 2.6+ 的安全限制
-            state_dict = torch.load(file_path + ".state_dict", map_location="cpu", weights_only=False)
-        else:
-            # 对于较新版本，使用from_config方法初始化
-            try:
-                # 首先尝试显式设置 weights_only=False 以处理 PyTorch 2.6+ 安全限制
-                ckpt_dict = torch.load(file_path, map_location="cpu", weights_only=False)
-            except TypeError:
-                # 对于较早版本的 PyTorch，weights_only 参数可能不存在
-                ckpt_dict = torch.load(file_path, map_location="cpu")
-            pointnav_policy = PointNavResNetTensorOutputPolicy.from_config(ckpt_dict["config"], obs_space, action_space)
-            state_dict = ckpt_dict["state_dict"]
-        # 加载模型权重
-        pointnav_policy.load_state_dict(state_dict)
-        return pointnav_policy
-
-    else:
-        # 如果habitat不可用，使用本地实现
-        ckpt_dict = torch.load(file_path, map_location="cpu")
-        pointnav_policy = PointNavResNetTensorOutputPolicy()
-        current_state_dict = pointnav_policy.state_dict()
-        # 让旧检查点能够与新代码一起工作（处理键名变化）
-        if "net.prev_action_embedding_cont.bias" not in ckpt_dict.keys():
-            ckpt_dict["net.prev_action_embedding_cont.bias"] = ckpt_dict["net.prev_action_embedding.bias"]
-        if "net.prev_action_embedding_cont.weights" not in ckpt_dict.keys():
-            ckpt_dict["net.prev_action_embedding_cont.weight"] = ckpt_dict["net.prev_action_embedding.weight"]
-
-        # 只加载当前模型中存在的参数
-        pointnav_policy.load_state_dict({k: v for k, v in ckpt_dict.items() if k in current_state_dict})
-        # 打印未加载的键
-        unused_keys = [k for k in ckpt_dict.keys() if k not in current_state_dict]
-        print(f"The following unused keys were not loaded when loading the pointnav policy: {unused_keys}")
-        return pointnav_policy
-
-
-def move_obs_to_device(
-    observations: Dict[str, Any],
-    device: torch.device,
-    unsqueeze: bool = False,
-) -> Dict[str, Tensor]:
-    """Moves observations to the given device, converts numpy arrays to torch tensors.
-
-    将观察数据移至指定设备，并将NumPy数组转换为PyTorch张量
-
-    Args:
-        observations: 观察数据字典
-        device: 目标设备
-        unsqueeze: 是否扩展张量维度
-
-    Returns:
-        转换后的观察数据字典，所有值都是位于指定设备的PyTorch张量
-    """
-    # 将每个字典值中的NumPy数组转换为PyTorch张量
-    for k, v in observations.items():
-        if isinstance(v, np.ndarray):
-            # 根据数据类型选择适当的张量类型
-            tensor_dtype = torch.uint8 if v.dtype == np.uint8 else torch.float32
-            observations[k] = torch.from_numpy(v).to(device=device, dtype=tensor_dtype)
-            # 如果需要，扩展张量维度（常用于添加批次维度）
-            if unsqueeze:
-                observations[k] = observations[k].unsqueeze(0)
-
-    return observations
 
 
 if __name__ == "__main__":

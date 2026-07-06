@@ -20,7 +20,7 @@ class Z3Auditor:
         # 如果 unsat，返回 False 和冲突 Core
         return True, "Success"
 
-@registry.register_task(name="NavDSLTask")
+# @registry.register_task(name="NavDSLTask")
 class NavDSLTask(EmbodiedTask):
     def __init__(self, config, sim, dataset):
         super().__init__(config=config, sim=sim, dataset=dataset)

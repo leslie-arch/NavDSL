@@ -18,13 +18,13 @@ class BasePolicy(Policy):
     作为其他复杂策略类的基类，定义了与Habitat框架集成所需的基本接口。
     """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, action_space, *args: Any, **kwargs: Any) -> None:
         """
         初始化基础策略.
 
         接受任意参数以兼容不同的子类初始化需求
         """
-        super().__init__()
+        super().__init__(action_space)
 
     @property
     def should_load_agent_state(self) -> bool:

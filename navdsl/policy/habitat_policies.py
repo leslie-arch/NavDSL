@@ -5,6 +5,7 @@
 from typing import Any, Dict, Union
 
 import numpy as np
+from gym import spaces
 import torch
 from depth_camera_filtering import filter_depth
 from frontier_exploration.base_explorer import BaseExplorer
@@ -86,6 +87,8 @@ class HabitatMixin:
 
     def __init__(
         self,
+        # observation_space: spaces.Dict,
+        action_space: spaces.Dict,
         camera_height: float,  # 相机高度
         min_depth: float,      # 最小深度值
         max_depth: float,      # 最大深度值
@@ -106,7 +109,7 @@ class HabitatMixin:
             image_width: 图像宽度（像素）
             dataset_type: 数据集类型，支持"hm3d"或"mp3d"
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(action_space, *args, **kwargs)
         self._camera_height = camera_height
         self._min_depth = min_depth
         self._max_depth = max_depth
@@ -118,7 +121,11 @@ class HabitatMixin:
         self._dataset_type = dataset_type
 
     @classmethod
-    def from_config(cls, config: DictConfig, *args_unused: Any, **kwargs_unused: Any) -> "HabitatMixin":
+    def from_config(cls,
+                    config: "DictConfig",
+                    observation_space: spaces.Dict,
+                    action_space: spaces.Dict,
+                    **kwargs_unused: Any) -> "HabitatMixin":
         """
         从配置创建HabitatMixin实例的类方法.
 
@@ -129,7 +136,7 @@ class HabitatMixin:
             配置好的HabitatMixin实例
         """
         # 获取策略配置
-        policy_config: DSLPolicyConfig = config.habitat_baselines.rl.policy
+        policy_config: DSLPolicyConfig = config.habitat_baselines.rl.policy.main_agent
         # 从配置中提取所有需要的参数
         kwargs = {k: policy_config[k] for k in DSLPolicyConfig.kwaarg_names}  # type: ignore
 
@@ -154,7 +161,8 @@ class HabitatMixin:
         else:
             raise ValueError("Dataset type could not be inferred from habitat config")
 
-        return cls(**kwargs)
+        return cls(action_space, **kwargs)
+        # return cls(observation_space, action_space, **kwargs)
 
     def act(
         self: Union["HabitatMixin", BaseObjectNavPolicy],
@@ -386,7 +394,7 @@ class SuperOracleFBEPolicy(HabitatMixin, BaseObjectNavPolicy):
             policy_info=[self._policy_info],
         )
 
-
+# BasePolicy -- BaseObjectNavPolicy -- BaseITMPolicy -- ITMPolicy
 @baseline_registry.register_policy
 class HabitatITMPolicy(HabitatMixin, ITMPolicy):
     """

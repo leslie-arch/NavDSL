@@ -46,6 +46,8 @@ class BaseObjectNavPolicy(BasePolicy):
 
     def __init__(
         self,
+        # observation_space,
+        action_space,
         pointnav_policy_path: str,  # 点导航策略权重路径
         depth_image_shape: Tuple[int, int],  # 深度图像形状
         pointnav_stop_radius: float,  # 点导航停止半径
@@ -68,6 +70,8 @@ class BaseObjectNavPolicy(BasePolicy):
         初始化基础目标导航策略
 
         Args:
+            observation_space: obs_transforms
+            action_space: agent action space
             pointnav_policy_path: 预训练点导航策略权重文件路径
             depth_image_shape: 处理深度图像的目标形状
             pointnav_stop_radius: 到达目标时的停止半径（米）
@@ -84,7 +88,7 @@ class BaseObjectNavPolicy(BasePolicy):
             coco_threshold: COCO类别对象检测的置信度阈值
             non_coco_threshold: 非COCO类别对象检测的置信度阈值
         """
-        super().__init__()
+        super().__init__(action_space)
         # 初始化各种对象检测和分割模型客户端
         self._object_detector = GroundingDINOClient(port=int(os.environ.get("GROUNDING_DINO_PORT", "12181")))
         self._coco_object_detector = YOLOv7Client(port=int(os.environ.get("YOLOV7_PORT", "12184")))

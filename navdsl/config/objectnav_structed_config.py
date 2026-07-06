@@ -13,6 +13,7 @@ from hydra.core.config_store import ConfigStore
 
 from ..sensor import symbolic_fact_sensor  # noqa F401
 
+
 @dataclass
 class ObjectNavBaseConfig:
     """
@@ -51,6 +52,7 @@ class ObjectNavBaseConfig:
         # 返回除"name"外的所有字段名
         return [f.name for f in fields(DSLConfig) if f.name != "name"]
 
+
 @dataclass
 class DSLConfig(ObjectNavBaseConfig):
     pass
@@ -84,12 +86,13 @@ class VLFMPolicyConfig(VLFMConfig, PolicyConfig):
 @dataclass
 class HabitatSymbolicFactSensorConfig(LabSensorConfig):
     r"""
-    For Object Navigation tasks only. Generates a discrete observation containing
+    For Object Navigation tasks only. Generates a discrete observation containing.
     the id of the goal object for the episode.
 
     :property goal_spec: A string that can take the value TASK_CATEGORY_ID or OBJECT_ID. If the value is TASK_CATEGORY_ID, then the observation will be the id of the `episode.object_category` attribute, if the value is OBJECT_ID, then the observation will be the id of the first goal object.
     :property goal_spec_max_val: If the `goal_spec` is OBJECT_ID, then `goal_spec_max_val` is the total number of different objects that can be goals. Note that this value must be greater than the largest episode goal category id.
     """
+
     type: str = "HabitatSymbolicFactSensor"
     goal_spec: str = "TASK_CATEGORY_ID"
     goal_spec_max_val: int = 50
@@ -115,4 +118,3 @@ cs.store(group="policy", name="dsl_config_base", node=DSLConfig())
 cs.store(group="habitat_baselines/rl/policy",
          name="dsl_policy",
          node=DSLPolicyConfig)
-

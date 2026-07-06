@@ -1,0 +1,127 @@
+# @package _global_
+# Imitation Learning (IL) 任务配置示例
+# 此示例基于 Embodied Question Answering (EQA) 任务的IL配置
+
+defaults:
+  # 引用 IL 基础配置 (habitat_baselines_il_config_base)
+  # 该配置在 habitat_baselines/config/default_structured_configs.py 中注册
+  # 提供了IL任务的基础配置结构，包括:
+  #   - trainer_name: 默认ppo (会被覆盖)
+  #   - torch_gpu_id: GPU设备ID
+  #   - tensorboard_dir: 日志目录
+  #   - checkpoint_folder: 检查点保存目录
+  #   - log_interval: 日志打印间隔
+  #   - force_torch_single_threaded: PyTorch单线程模式
+  #   - il: IL特定配置的字典
+  - /habitat_baselines: habitat_baselines_il_config_base
+
+  # 引用导航基准配置 (eqa_rgbonly_mp3d)
+  # 该配置在 habitat/config/benchmark/nav/eqa_rgbonly_mp3d.yaml 中定义
+  # 它本身也包含defaults:
+  #   - /habitat: habitat_config_base (Habitat环境基础配置)
+  #   - /habitat/task: eqa (任务类型为EQA-v0)
+  #   - /habitat/simulator/sensor_setups@habitat.simulator.agents.main_agent: rgb_agent (传感器配置)
+  #   - /habitat/dataset/eqa: mp3d (使用Matterport3D数据集)
+  # 提供了EQA任务在Matterport3D场景上的基础环境配置
+  - /benchmark/nav: eqa_rgbonly_mp3d
+
+  # 重写/覆盖传感器配置
+  # 将main_agent的传感器从rgb_agent改为rgbd_agent
+  # rgbd_agent包含RGB和深度传感器，而rgb_agent只有RGB传感器
+  # @符号表示覆盖特定路径下的配置
+  - override /habitat/simulator/sensor_setups@habitat.simulator.agents.main_agent: rgbd_agent
+
+  # _self_ 表示当前配置文件中的内容
+  # 必须放在defaults列表的最后，确保当前文件的配置可以覆盖继承的配置
+  # Hydra会按照defaults顺序合并配置，后面的覆盖前面的
+  - _self_
+
+# 训练器名称，指定使用哪个IL训练器
+# 选项包括: "eqa-cnn-pretrain", "vqa", "pacman" 等
+trainer_name: "vqa"
+
+# PyTorch使用的GPU设备ID
+torch_gpu_id: 0
+
+# 评估时加载checkpoint的目录或文件路径
+eval_ckpt_path_dir: "data/eqa/vqa/checkpoints/"
+
+# 训练checkpoint保存目录
+checkpoint_folder: "data/eqa/vqa/checkpoints/"
+
+# TensorBoard日志目录
+tensorboard_dir: "data/eqa/vqa/tb"
+
+# 训练日志打印间隔（步数）
+log_interval: 100
+
+# 强制PyTorch使用单线程模式
+# 这通常能显著提升性能，因为内存复制操作在单线程下更快
+force_torch_single_threaded: True
+
+# Imitation Learning 特定配置
+il:
+  # 如果为True，只保存最后num_frames帧到磁盘
+  # 如果为False，保存每个episode的所有帧（用于后续NAV任务）
+  only_vqa_task: False
+
+  # 训练数据集路径，{split}会被替换为train/val等
+  dataset_path: "data/datasets/eqa/frame_dataset/{split}/{split}.db"
+
+  # 帧数据集目录路径
+  frame_dataset_path: "data/datasets/eqa/frame_dataset/{split}"
+
+  # EQA CNN预训练模型checkpoint路径
+  # 该编码器将用于特征提取
+  eqa_cnn_pretrain_ckpt_path: "data/eqa/eqa_cnn_pretrain/checkpoints/epoch_5.ckpt"
+
+  # 评估结果保存目录，{split}会被替换为train/val等
+  results_dir: "data/eqa/vqa/results/{split}"
+
+  # 是否记录指标
+  log_metrics: True
+
+  # 输出日志目录
+  output_log_dir: "data/eqa/vqa/logs"
+
+  # 评估时是否保存结果
+  eval_save_results: True
+
+  # 评估结果保存间隔
+  eval_save_results_interval: 10
+
+  # VQA 模型特定参数
+  vqa:
+    # 用于VQA模型的帧数
+    num_frames: 5
+
+    # 最大训练轮数
+    max_epochs: 50
+
+    # 批次大小
+    batch_size: 20
+
+    # 学习率
+    lr: 3e-4
+
+    # 是否冻结编码器（不更新预训练模型的参数）
+    freeze_encoder: False
+
+# 任务环境配置覆盖
+habitat:
+  environment:
+    # 最大episode步数
+    max_episode_steps: 500
+
+  simulator:
+    agents:
+      main_agent:
+        sim_sensors:
+          # RGB传感器分辨率配置
+          rgb_sensor:
+            width: 256
+            height: 256
+          # 深度传感器分辨率配置
+          depth_sensor:
+            width: 256
+            height: 256

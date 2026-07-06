@@ -27,7 +27,7 @@ defaults:
   # 如果是 Dict 成员（如 Policy, Measurement, Sensor）：使用 @ 注入是安全的 (如dsl_policy)
   # 如果是 Object 属性（如 Agent 的某个参数）：禁止使用 @ 注入，直接在 YAML 下方写。
   #  - /habitat/simulator/sim_sensors@habitat.simulator.agents.main_agent.sim_sensors.symbolic_fact_sensor: symbolic_fact_sensor
-  # - /habitat/task/lab_sensors@habitat.task.lab_sensors.symbolic_fact_sensor: symbolic_fact_sensor
+  - /habitat/task/lab_sensors@habitat.task.lab_sensors.symbolic_fact_sensor: symbolic_fact_sensor
   - /habitat_baselines/rl/policy@habitat_baselines.rl.policy.main_agent: dsl_policy
   # 下面这种写法，"/habitat_baselines/rl/policy/"最后的这个'/'一定要有
   # 有斜杠被解释为“在 policy 路径下添加/插入一个名为 dsl_policy 的条目”
@@ -45,25 +45,25 @@ habitat:
     navmesh_include_static_objects: True
     scene: ""
     scene_dataset: /home/hjk/dataset/scene_datasets/hm3d_v0.2/${g_split}/hm3d_annotated_${g_split}_basis.scene_dataset_config.json
-    agents:
-      main_agent:
-        sim_sensors:
-          rgb_sensor:
-            type: HabitatSimRGBSensor
-            height: 480
-            width: 640
-          depth_sensor:
-            type: HabitatSimDepthSensor
-            min_depth: 0.0
-            max_depth: 10.0
-            normalize_depth: True
-            height: 480
-            width: 640
-          # Ensure this block exists and isn't empty
-          semantic_sensor:
-            type: HabitatSimSemanticSensor
-            height: 480
-            width: 640
+    # agents:
+    #   main_agent:
+    #     sim_sensors:
+    #       rgb_sensor:
+    #         type: HabitatSimRGBSensor
+    #         height: 480
+    #         width: 640
+    #       depth_sensor:
+    #         type: HabitatSimDepthSensor
+    #         min_depth: 0.0
+    #         max_depth: 10.0
+    #         normalize_depth: True
+    #         height: 480
+    #         width: 640
+    #       # Ensure this block exists and isn't empty
+    #       semantic_sensor:
+    #         type: HabitatSimSemanticSensor
+    #         height: 480
+    #         width: 640
           # symbolic_fact_sensor:
           #   type: HabitatSimSymbolicFactSensor
           #   height: 480
@@ -90,13 +90,13 @@ habitat:
   # habitat.core.dataset.Dataset
   # @registry.register_dataset(name="MyCustomDataset-v1")
   dataset:
-    type:  ObjectNav-HM3D-v1  # InstanceImageNav-v1
+    # type:  ObjectNav-HM3D-v1  # InstanceImageNav-v1
     split: ${g_split}
     content_scenes: ["*"]  # [ "qgZhhx1MpTi" ]
     # 指向 3D 模型 (.glb) 根目录
     scenes_dir: /home/hjk/dataset/scene_datasets
     # 指向任务定义 (.json.gz) 路径，使用占位符
-    data_path: /home/hjk/dataset/datasets/objectnav/hm3d/v2/objectnav_hm3d_v2/${g_split}/${g_split}.json.gz
+    data_path: /home/hjk/dataset/datasets/vln/hm3d/vln-ce/v1.3/R2R_VLNCE_v1-3/${g_split}/${g_split}.json.gz
     # data_path: /home/hjk/sshfs_root/dataset/habitat-data/datasets/instance_imagenav/hm3d/v3/instance_imagenav_hm3d_v3/${g_split}/${g_split}.json.gz
 
 habitat_baselines:

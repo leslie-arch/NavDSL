@@ -54,6 +54,7 @@ class BaseITMPolicy(BaseObjectNavPolicy):
 
     def __init__(
         self,
+        action_space,
         text_prompt: str,  # 文本提示，用于计算图像-文本相似度
         use_max_confidence: bool = True,  # 是否使用最大置信度
         sync_explored_areas: bool = False,  # 是否同步已探索区域
@@ -68,7 +69,7 @@ class BaseITMPolicy(BaseObjectNavPolicy):
             use_max_confidence: 是否使用最大置信度而非加权平均
             sync_explored_areas: 是否将价值地图与障碍物地图的已探索区域同步
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(action_space, *args, **kwargs)
         # 初始化BLIP2图像-文本匹配客户端
         self._itm = BLIP2ITMClient(port=int(os.environ.get("BLIP2ITM_PORT", "12182")))
         self._text_prompt = text_prompt
@@ -307,15 +308,16 @@ class BaseITMPolicy(BaseObjectNavPolicy):
 
 class ITMPolicy(BaseITMPolicy):
     """
-    图像-文本匹配策略（第一版）
+    图像-文本匹配策略（第一版）.
+
     使用边界地图（FrontierMap）来管理和评估边界点
     """
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, action_space, *args: Any, **kwargs: Any) -> None:
         """
         初始化ITM策略
         创建边界地图用于边界点管理
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(action_space, *args, **kwargs)
         self._frontier_map: FrontierMap = FrontierMap()  # 创建边界地图
 
     def act(
@@ -436,14 +438,14 @@ class ITMPolicyV3(ITMPolicyV2):
     在V2基础上增加了探索阈值
     当最高目标价值低于阈值时，转向探索模式而非目标导向模式
     """
-    def __init__(self, exploration_thresh: float, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, action_space, exploration_thresh: float, *args: Any, **kwargs: Any) -> None:
         """
         初始化ITMPolicyV3
 
         Args:
             exploration_thresh: 探索阈值，当目标价值低于此值时转为探索模式
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(self, action_space, *args, **kwargs)
         self._exploration_thresh = exploration_thresh  # 探索阈值
 
         def visualize_value_map(arr: np.ndarray) -> np.ndarray:

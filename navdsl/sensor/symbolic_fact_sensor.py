@@ -98,27 +98,22 @@ class HabitatSymbolicFactSensor(Sensor):
         """利用HM3D的Region属性快速定位当前房间."""
         # print(f"_get_current_room: episode {episode.goals_key}")
         # 1. 检查语义场景是否真的载入了元数据
-        if self._sim.semantic_scene and len(self._sim.semantic_scene.objects) > 0:
-            print(f"Number of Objects: {len(self._sim.semantic_scene.objects)}\n"
-                  f"Graph node: {self._sim.get_active_scene_graph().get_root_node().object_semantic_id}")
-        print(f"_get_current_room: dataset scenes_path {self._dataset.content_scenes_path}\n"
-              f"episodes: length {len(self._dataset.episodes)} scene_dataset_config: {self._dataset.episodes[1].scene_dataset_config}")
-        print(f"_get_current_room: episode id {episode.episode_id} scene_id {episode.scene_id}, "
-               f"scene dataset config {episode.scene_dataset_config}, "
-               f"info: {episode.info}, initialize template: {self._sim.get_stage_initialization_template()}")
+        # if self._sim.semantic_scene and len(self._sim.semantic_scene.objects) > 0:
+        #     print(f"Number of Objects: {len(self._sim.semantic_scene.objects)}\n"
+        #           f"Graph node: {self._sim.get_active_scene_graph().get_root_node().object_semantic_id}")
+        # print(f"_get_current_room: dataset scenes_path {self._dataset.content_scenes_path}\n"
+        #       f"episodes: length {len(self._dataset.episodes)} "
+        #       f"scene_dataset_config: {self._dataset.episodes[1].scene_dataset_config}")
+        # print(f"_get_current_room: episode id {episode.episode_id} scene_id {episode.scene_id}, "
+        #       f"scene dataset config {episode.scene_dataset_config}, "
+        #       f"info: {episode.info},"
+        #       f" initialize template: {self._sim.get_stage_initialization_template()}")
 
-        for obj in self._sim.semantic_scene.objects[:10]:
-            print(f"object --- [{obj.semantic_id}.{obj.id}]: {obj.category.name()}")
-        #     print(f"Number of Regions: {len(self._sim.semantic_scene.regions)}")
-        #     print(f"_get_current_room: semantic_scene {self._sim.semantic_scene}")
-        regions = self._sim.semantic_scene.regions
-        if not len(regions) == 0:
-            print(f"_get_current_room: regions count: {len(regions)}")
         current_region_name = "unknown_area"
-        for region in regions:
+        for region in self._sim.semantic_scene.regions:
             if region.aabb.contains(agent_pos):
                 current_region_name = region.category.name()
-
+        print(f"_get_current_room: region name {current_region_name}")
         return current_region_name
 
     def _get_visible_objects(self, observations, max_dist=5.0):
@@ -129,8 +124,6 @@ class HabitatSymbolicFactSensor(Sensor):
         """
         semantic_obs = observations["semantic"]
         unique_obj_ids = np.unique(semantic_obs)
-        if not np.all(semantic_obs == 0):
-            print(f"_get_visible_objects: find {len(semantic_obs)} visible object(s).")
 
         visible_facts = []
         for obj_id in unique_obj_ids:
@@ -140,16 +133,20 @@ class HabitatSymbolicFactSensor(Sensor):
 
             # 获取物体元数据
             obj = self._sim.semantic_scene.objects[obj_id]
-            print(f"_get_visible_objects: ID {obj_id} {obj} at {obj.aabb.center}/{self._sim.get_agent_state().position}")
+            # print(f"_get_visible_objects: ID {obj.id} at "
+            #       f"{obj.aabb.center()}/{self._sim.get_agent_state().position}")
             # 距离过滤
-            dist = np.linalg.norm(obj.aabb.center -
+            dist = np.linalg.norm(obj.aabb.center() -
                                   self._sim.get_agent_state().position)
+            pysizes = habitat_sim.geo.OBB(obj.aabb).sizes
+            pyobbsizes = obj.obb.sizes
+            print(f"Object center types: sizes {(pysizes)}-{(pyobbsizes)}")
 
             if dist < max_dist:
                 visible_facts.append({
                     "id": obj.id,
                     "class": obj.category.name(),
-                    "pos": obj.aabb.center.tolist()
+                    "pos": list(obj.aabb.center())
                 })
         return visible_facts
 
@@ -191,11 +188,11 @@ class HabitatSymbolicFactSensor(Sensor):
         """读取当前智能体位置及可见物体，转化为 Nav-ASL 事实."""
         agent_state = self._sim.get_agent_state()
         current_room = self._get_current_room(agent_state.position, episode)
-        visible_objects = self._get_visible_objects(observations)
 
         facts = [f"At(robot, {current_room})"]
+        visible_objects = self._get_visible_objects(observations)
         for obj in visible_objects:
-            facts.append(f"Visible({obj.name})")
+            facts.append(f"Visible({obj['class']})")
 
         door_stats = self._get_door_status(visible_objects)
         for door in door_stats:

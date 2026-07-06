@@ -37,10 +37,10 @@ class ResNetEncoder(nn.Module):
         """
         前向传播方法
         处理观察数据生成视觉特征
-        
+
         Args:
             observations: 包含视觉输入的字典
-            
+
         Returns:
             处理后的视觉特征
         """
@@ -68,7 +68,7 @@ class PointNavResNetNet(nn.Module):
     def __init__(self, discrete_actions: bool = False, no_fwd_dict: bool = False):
         """
         初始化点导航ResNet网络
-        
+
         Args:
             discrete_actions: 是否使用离散动作空间
             no_fwd_dict: 前向传播是否返回字典
@@ -108,14 +108,14 @@ class PointNavResNetNet(nn.Module):
         """
         前向传播方法
         处理输入数据，生成策略特征
-        
+
         Args:
             observations: 观察数据字典
             rnn_hidden_states: RNN隐藏状态
             prev_actions: 前一步执行的动作
             masks: 重置掩码，0表示重置，1表示继续
             rnn_build_seq_info: 可选的RNN序列构建信息
-            
+
         Returns:
             策略特征、更新后的RNN隐藏状态和额外信息字典
         """
@@ -174,10 +174,10 @@ class CustomNormal(torch.distributions.normal.Normal):
     def sample(self, sample_shape: Size = torch.Size()) -> torch.Tensor:
         """
         使用可重参数化采样
-        
+
         Args:
             sample_shape: 采样形状
-            
+
         Returns:
             采样的动作
         """
@@ -196,7 +196,7 @@ class GaussianNet(nn.Module):
     def __init__(self, num_inputs: int, num_outputs: int) -> None:
         """
         初始化高斯网络
-        
+
         Args:
             num_inputs: 输入特征维度
             num_outputs: 输出动作维度
@@ -214,10 +214,10 @@ class GaussianNet(nn.Module):
         """
         前向传播方法
         从输入特征生成动作分布
-        
+
         Args:
             x: 输入特征
-            
+
         Returns:
             动作的正态分布
         """
@@ -258,14 +258,14 @@ class PointNavResNetPolicy(nn.Module):
         """
         执行策略动作
         根据当前观察和状态，生成下一步动作
-        
+
         Args:
             observations: 观察数据字典，包含深度图像和目标信息
             rnn_hidden_states: RNN隐藏状态
             prev_actions: 前一步执行的动作
             masks: 重置掩码，0表示重置，1表示继续
             deterministic: 是否使用确定性策略(均值)而非随机采样
-            
+
         Returns:
             动作张量和更新后的RNN隐藏状态
         """

@@ -1,7 +1,8 @@
 # Copyright (c) 2023 Boston Dynamics AI Institute LLC. All rights reserved.
 
 import os
-
+from pathlib import Path
+from omegaconf import OmegaConf
 # The following imports require habitat to be installed, and despite not being used by
 # this script itself, will register several classes and make them discoverable by Hydra.
 # This run.py script is expected to only be used when habitat is installed, thus they
@@ -11,7 +12,7 @@ import os
 import frontier_exploration  # noqa
 import hydra  # noqa
 from habitat import get_config  # noqa
-from habitat.config import read_write
+from habitat.config import read_write  # noqa F401
 from habitat.config.default import patch_config
 from habitat.config.default_structured_configs import register_hydra_plugin
 from habitat_baselines.run import execute_exp
@@ -23,14 +24,14 @@ from omegaconf import DictConfig
 # (register sensors, observations, policies, and trainer)
 import navdsl.measurements.traveled_stairs  # noqa: F401
 import navdsl.obs_transformers.resize  # noqa: F401
-import navdsl.config.objectnav_structed_config  # noqa: F401
+from navdsl.config import objectnav_structed_config  # noqa: F401
 
-from navdsl.data_adapter import object_nav_hm3d_dataset
+from navdsl.data_adapter import object_nav_hm3d_dataset  # noqa F401
 import navdsl.policy.action_replay_policy  # noqa: F401
 import navdsl.policy.habitat_policies  # noqa: F401 baseline_registry.register_policy
 # import navdsl.utils.vlfm_trainer  # noqa: F401  baseline_registry.register_trainer
 # import navdsl.utils.dsl_trainer  # noqa: F401  baseline_registry.register_trainer
-import navdsl.utils
+import navdsl.utils  # noqa F401
 # import navdsl.sensor.symbolic_fact_sensor  # noqa: F401
 
 
@@ -56,7 +57,13 @@ def main(cfg: DictConfig) -> None:
         print("python -m navdsl.utils.generate_dummy_policy")
         exit(1)
 
+    # u = objectnav_structed_config.DSLPolicyConfig()
+    # print(f"DSLPolicyConfig: {u}")
     cfg = patch_config(cfg)
+    config_save_path = Path(cfg.habitat_baselines.rl.policy.main_agent.pointnav_policy_path)
+    config_save_fp = config_save_path.with_suffix('.yaml')
+    with open(config_save_fp, "w+") as f:
+        OmegaConf.save(config=cfg, f=f)
     # with read_write(cfg):
     #     try:
     #         cfg.habitat.simulator.agents.main_agent.sim_sensors.pop("semantic_sensor")
