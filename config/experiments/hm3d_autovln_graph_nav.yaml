@@ -1,0 +1,61 @@
+# @package _global_
+
+# Experiment config: DUET BC fine-tune on HM3D-AutoVLN graph-nav task.
+# Uses standalone duet_il trainer (NOT PPO/RolloutStorage) + DUETPolicy
+# with pretrained weights from HM3D-AutoVLN release.
+
+defaults:
+  - /benchmark/nav: vln_hm3d_autovln
+  - /habitat_baselines: habitat_baselines_il_config_base
+  - _self_
+
+habitat_baselines:
+  trainer_name: "duet_il"
+  torch_gpu_id: 0
+  checkpoint_folder: "checkpoints/duet_hm3d_autovln/ckpts"
+  tensorboard_dir: "outputs/duet_hm3d_autovln/tb"
+  video_dir: "outputs/duet_hm3d_autovln/video"
+  log_file: "outputs/duet_hm3d_autovln/train.log"
+  eval_ckpt_path_dir: "outputs/duet_hm3d_autovln/ckpts"
+  num_environments: 1
+  log_interval: 100
+  num_checkpoints: 10
+  test_episode_count: 100
+  force_torch_single_threaded: True
+  evaluate: False
+  load_resume_state_config: False
+
+  il:
+    duet:
+      # Pretrained DUET weights (NeurIPS 2022 paper release)
+      checkpoint: "/home/hjk/sshfs_root/dataset/habitat-data/datasets/vln/hm3d/autovln/v1.0/REVERIE/expr_duet/pretrain_hm3d_v1/pseudo3d-depth2-cmt-timm.vitb16-mlm.sap.og-init.lxmert-bsz.64/ckpts/model_step_35000.pt"
+      tokenizer: "bert"
+      image_feat_size: 768
+      angle_feat_size: 4
+      obj_feat_size: 768
+      num_l_layers: 9
+      num_pano_layers: 2
+      num_x_layers: 4
+      graph_sprels: True
+      fusion: "dynamic"
+      fix_lang_embedding: False
+      fix_pano_embedding: False
+      fix_local_branch: False
+
+      # Training hyperparams
+      max_epochs: 100
+      batch_size: 8
+      learning_rate: 1.0e-5
+      weight_decay: 0.01
+      warmup_ratio: 0.1
+      grad_accum_steps: 1
+      max_grad_norm: 5.0
+      seed: 0
+
+      # Evaluation
+      eval_interval: 1
+      max_action_steps: 20
+
+      # DAgger (Phase 2, optional)
+      use_dagger: False
+      dagger_update_steps: 3000

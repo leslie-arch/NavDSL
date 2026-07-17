@@ -1,0 +1,48 @@
+# @package habitat.task
+
+# Task config for VLNGraphNav-v0: discrete-viewpoint graph navigation.
+# Inline action/sensor/measurement configs (no defaults list — those require
+# dataclass schema registration in the hydra config store).
+
+defaults:
+  - /habitat/task: task_config_base  # absolute ref: schema lives in habitat-lab's namespace
+  - _self_
+
+type: VLNGraphNav-v0
+# Note: max_steps is read from habitat.environment.max_episode_steps by the task
+# (TaskConfig dataclass doesn't allow custom max_steps field)
+
+# Action configs
+actions:
+  goto_viewpoint:
+    type: GotoViewpointAction
+  stop:
+    type: StopAction
+
+# Sensor configs
+lab_sensors:
+  viewpoint_feature_sensor:
+    type: ViewpointFeatureSensor
+    #uuid: viewpoint_features
+  object_feature_sensor:
+    type: ObjectFeatureSensor
+    #uuid: object_features
+  candidate_viewpoints_sensor:
+    type: CandidateViewpointsSensor
+    #uuid: candidate_viewpoints
+  graph_nodes_sensor:
+    type: GraphNodesSensor
+    #uuid: graph_nodes
+  instruction_sensor:
+    type: InstructionSensor
+    #uuid: instruction
+
+# Measurement configs
+measurements:
+  viewpoint_success:
+    type: ViewpointSuccess
+  viewpoint_spl:
+    type: ViewpointSPL
+    #success_measure: ViewpointSuccess
+  viewpoint_steps:
+    type: ViewpointSteps

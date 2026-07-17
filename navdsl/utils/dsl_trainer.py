@@ -196,10 +196,10 @@ class DSLTrainer(PPOTrainer):
                     not_done_masks,
                     deterministic=False,
                 )
-                if "VLFM_RECORD_ACTIONS_DIR" in os.environ:
+                if "DSL_RECORD_ACTIONS_DIR" in os.environ:
                     action_id = action_data.actions.cpu()[0].item()
                     filepath = os.path.join(
-                        os.environ["VLFM_RECORD_ACTIONS_DIR"],
+                        os.environ["DSL_RECORD_ACTIONS_DIR"],
                         "actions.txt",
                     )
                     # If the file doesn't exist, create it

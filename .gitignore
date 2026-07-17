@@ -1,9 +1,10 @@
 docker/
 tb/
 outputs/
-tools/
-vlfm/
-data/*
+deps/
+/tools
+checkpoints/*
+outputs/
 
 __pycache__
 

@@ -1,0 +1,37 @@
+# @package habitat.dataset
+
+# Dataset config for HM3D-AutoVLN graph-nav VLN task.
+# All paths are absolute; replace with your own mount points if needed.
+
+defaults:
+  - /navdsl/dataset: hm3d_autovln_schema
+  - _self_
+
+type: HM3DAutoVLN-v1
+split: train
+content_scenes: ["*"]
+
+# Episodes json.gz produced by navdsl.data_adapter.convert_hm3d_autovln
+data_path: "/sata/sdb7/dataset/habitat-data/datasets/vln/hm3d/autovln/v1.0/DSL/{split}/{split}.json.gz"
+
+# HM3D scene dataset (mesh files)
+scenes_dir: "/sata/sdb7/dataset/habitat-data/versioned_data/hm3d-0.2/hm3d/"
+
+# AutoVLN-specific paths
+nav_graph_dir: "/sata/sdb7/dataset/habitat-data/datasets/vln/hm3d/autovln/v1.0/NAV_GRAPH/connectivity"
+
+# Feature storage — two supported modes:
+#   (A) per-scan LMDB directory (RECOMMENDED for maintainability):
+#       Layout: {feature_per_scan_dir}/{split}/{scan}.lmdb
+#       keys: 'view_{vp}' -> (36, 1768) ndarray
+#             'obj_{vp}'  -> dict
+#       Use split_lmdb_per_scan.py to produce this from the monolithic LMDBs.
+#   (B) monolithic LMDBs (legacy):
+#       Just comment out feature_per_scan_dir and uncomment view_feature_lmdb /
+#       object_feature_lmdb below.
+feature_per_scan_dir: "/sata/sdb7/dataset/habitat-data/datasets/vln/hm3d/autovln/v1.0/NAV_GRAPH/features/per_scan"
+
+# view_feature_lmdb: "/sata/sdb7/dataset/habitat-data/datasets/vln/hm3d/autovln/v1.0/NAV_GRAPH/features/view_timm_imagenet_vitb16"
+# object_feature_lmdb: "/sata/sdb7/dataset/habitat-data/datasets/vln/hm3d/autovln/v1.0/NAV_GRAPH/features/obj2d_ade20k_pseudo3d_merged_timm_imagenet_vitb16"
+
+rel_angles_path: "/sata/sdb7/dataset/habitat-data/datasets/vln/hm3d/autovln/v1.0/NAV_GRAPH/annotations/scanvp_candview_relangles.json"

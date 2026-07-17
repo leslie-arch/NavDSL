@@ -30,8 +30,13 @@ class BaseITMPolicy(BaseObjectNavPolicy):
 
     使用图像-文本相似度来指导机器人探索和导航到目标对象
     """
+
     _target_object_color: Tuple[int, int, int] = (0, 255, 0)  # 目标对象标记颜色（绿色）
-    _selected__frontier_color: Tuple[int, int, int] = (0, 255, 255)  # 选中的边界点颜色（黄色）
+    _selected__frontier_color: Tuple[int, int, int] = (
+        0,
+        255,
+        255,
+    )  # 选中的边界点颜色（黄色）
     _frontier_color: Tuple[int, int, int] = (0, 0, 255)  # 边界点颜色（红色）
     _circle_marker_thickness: int = 2  # 圆形标记线条粗细
     _circle_marker_radius: int = 5  # 圆形标记半径
@@ -71,11 +76,13 @@ class BaseITMPolicy(BaseObjectNavPolicy):
         """
         super().__init__(action_space, *args, **kwargs)
         # 初始化BLIP2图像-文本匹配客户端
-        self._itm = BLIP2ITMClient(port=int(os.environ.get("BLIP2ITM_PORT", "12182")))
+        self._itm = BLIP2ITMClient(port=int(os.environ.get("DSL_SERVER_PORT", "8080")))
         self._text_prompt = text_prompt
         # 初始化价值地图
         self._value_map: ValueMap = ValueMap(
-            value_channels=len(text_prompt.split(PROMPT_SEPARATOR)),  # 根据提示数量确定通道数
+            value_channels=len(
+                text_prompt.split(PROMPT_SEPARATOR)
+            ),  # 根据提示数量确定通道数
             use_max_confidence=use_max_confidence,
             obstacle_map=self._obstacle_map if sync_explored_areas else None,
         )
@@ -113,8 +120,8 @@ class BaseITMPolicy(BaseObjectNavPolicy):
         # 获取最佳边界点及其价值
         best_frontier, best_value = self._get_best_frontier(observations, frontiers)
         # 记录调试信息
-        os.environ["DEBUG_INFO"] = f"Best value: {best_value*100:.2f}%"
-        print(f"Best value: {best_value*100:.2f}%")
+        os.environ["DEBUG_INFO"] = f"Best value: {best_value * 100:.2f}%"
+        print(f"Best value: {best_value * 100:.2f}%")
         # 使用点导航策略移动到最佳边界点
         pointnav_action = self._pointnav(best_frontier, stop=False)
 
@@ -138,7 +145,9 @@ class BaseITMPolicy(BaseObjectNavPolicy):
             Tuple[np.ndarray, float]: 最佳边界点及其价值
         """
         # 对边界点按价值降序排序
-        sorted_pts, sorted_values = self._sort_frontiers_by_value(observations, frontiers)
+        sorted_pts, sorted_values = self._sort_frontiers_by_value(
+            observations, frontiers
+        )
         robot_xy = self._observations_cache["robot_xy"]  # 获取机器人当前位置
         best_frontier_idx = None  # 最佳边界点索引
         top_two_values = tuple(sorted_values[:2])  # 记录前两个最高价值，用于循环检测
@@ -158,7 +167,9 @@ class BaseITMPolicy(BaseObjectNavPolicy):
 
             # 如果上一个点不在列表中，查找附近的点
             if curr_index is None:
-                closest_index = closest_point_within_threshold(sorted_pts, self._last_frontier, threshold=0.5)
+                closest_index = closest_point_within_threshold(
+                    sorted_pts, self._last_frontier, threshold=0.5
+                )
 
                 if closest_index != -1:
                     # 存在接近上一个边界点的点
@@ -178,7 +189,9 @@ class BaseITMPolicy(BaseObjectNavPolicy):
         if best_frontier_idx is None:
             for idx, frontier in enumerate(sorted_pts):
                 # 检查该边界点是否会导致循环路径
-                cyclic = self._acyclic_enforcer.check_cyclic(robot_xy, frontier, top_two_values)
+                cyclic = self._acyclic_enforcer.check_cyclic(
+                    robot_xy, frontier, top_two_values
+                )
                 if cyclic:
                     print("Suppressed cyclic frontier.")
                     continue
@@ -202,7 +215,7 @@ class BaseITMPolicy(BaseObjectNavPolicy):
         # 记录选择的边界点和价值
         self._last_value = best_value
         self._last_frontier = best_frontier
-        os.environ["DEBUG_INFO"] += f" Best value: {best_value*100:.2f}%"
+        os.environ["DEBUG_INFO"] += f" Best value: {best_value * 100:.2f}%"
 
         return best_frontier, best_value
 
@@ -271,7 +284,9 @@ class BaseITMPolicy(BaseObjectNavPolicy):
             [
                 self._itm.cosine(
                     rgb,
-                    p.replace("target_object", self._target_object.replace("|", "/")),  # 替换目标对象名称
+                    p.replace(
+                        "target_object", self._target_object.replace("|", "/")
+                    ),  # 替换目标对象名称
                 )
                 for p in self._text_prompt.split(PROMPT_SEPARATOR)  # 处理每个文本提示
             ]
@@ -281,7 +296,9 @@ class BaseITMPolicy(BaseObjectNavPolicy):
         for cosine, (rgb, depth, tf, min_depth, max_depth, fov) in zip(
             cosines, self._observations_cache["value_map_rgbd"]
         ):
-            self._value_map.update_map(np.array(cosine), depth, tf, min_depth, max_depth, fov)
+            self._value_map.update_map(
+                np.array(cosine), depth, tf, min_depth, max_depth, fov
+            )
 
         # 更新代理轨迹
         self._value_map.update_agent_traj(
@@ -312,6 +329,7 @@ class ITMPolicy(BaseITMPolicy):
 
     使用边界地图（FrontierMap）来管理和评估边界点
     """
+
     def __init__(self, action_space, *args: Any, **kwargs: Any) -> None:
         """
         初始化ITM策略
@@ -346,7 +364,9 @@ class ITMPolicy(BaseITMPolicy):
         if self._visualize:  # 如果需要可视化，更新价值地图
             self._update_value_map()
         # 调用父类的act方法决定行为
-        return super().act(observations, rnn_hidden_states, prev_actions, masks, deterministic)
+        return super().act(
+            observations, rnn_hidden_states, prev_actions, masks, deterministic
+        )
 
     def _reset(self) -> None:
         """
@@ -386,6 +406,7 @@ class ITMPolicyV2(BaseITMPolicy):
     直接使用价值地图对边界点进行评估和排序
     比第一版更直接地利用价值地图信息
     """
+
     def act(
         self,
         observations: Dict,
@@ -410,7 +431,9 @@ class ITMPolicyV2(BaseITMPolicy):
         """
         self._pre_step(observations, masks)
         self._update_value_map()  # 总是更新价值地图
-        return super().act(observations, rnn_hidden_states, prev_actions, masks, deterministic)
+        return super().act(
+            observations, rnn_hidden_states, prev_actions, masks, deterministic
+        )
 
     def _sort_frontiers_by_value(
         self, observations: "TensorDict", frontiers: np.ndarray
@@ -438,7 +461,10 @@ class ITMPolicyV3(ITMPolicyV2):
     在V2基础上增加了探索阈值
     当最高目标价值低于阈值时，转向探索模式而非目标导向模式
     """
-    def __init__(self, action_space, exploration_thresh: float, *args: Any, **kwargs: Any) -> None:
+
+    def __init__(
+        self, action_space, exploration_thresh: float, *args: Any, **kwargs: Any
+    ) -> None:
         """
         初始化ITMPolicyV3
 
@@ -487,7 +513,9 @@ class ITMPolicyV3(ITMPolicyV2):
             排序后的边界点和价值列表
         """
         # 调用价值地图的sort_waypoints方法，使用_reduce_values函数处理多通道价值
-        sorted_frontiers, sorted_values = self._value_map.sort_waypoints(frontiers, 0.5, reduce_fn=self._reduce_values)
+        sorted_frontiers, sorted_values = self._value_map.sort_waypoints(
+            frontiers, 0.5, reduce_fn=self._reduce_values
+        )
 
         return sorted_frontiers, sorted_values
 
@@ -512,7 +540,9 @@ class ITMPolicyV3(ITMPolicyV2):
 
         # 如果最高目标价值低于探索阈值，使用探索价值
         if max_target_value < self._exploration_thresh:
-            explore_values = [v[1] for v in values]  # 提取每个元组的第二个元素（探索价值）
+            explore_values = [
+                v[1] for v in values
+            ]  # 提取每个元组的第二个元素（探索价值）
             return explore_values
         else:
             # 否则使用目标价值

@@ -18,6 +18,7 @@ class ServerMixin:
     服务器混入类，为模型服务提供基本功能。
     子类需要实现process_payload方法来处理请求负载。
     """
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
@@ -34,7 +35,7 @@ class ServerMixin:
         raise NotImplementedError
 
 
-def host_model(model: Any, name: str, port: int = 5000) -> None:
+def host_model(model: Any, name: str, port: int = 5000, ip: str = "localhost") -> None:
     """
     将模型作为REST API托管使用Flask框架。
 
@@ -42,6 +43,7 @@ def host_model(model: Any, name: str, port: int = 5000) -> None:
         model: 要托管的模型实例
         name: API端点名称
         port: 服务器端口号，默认为5000
+        ip: 监听地址，默认为localhost
     """
     app = Flask(__name__)
 
@@ -51,7 +53,36 @@ def host_model(model: Any, name: str, port: int = 5000) -> None:
         payload = request.json
         return jsonify(model.process_payload(payload))
 
-    app.run(host="localhost", port=port)
+    app.run(host=ip, port=port)
+
+
+def host_models(
+    models: list,
+    ip: str = "localhost",
+    port: int = 5000,
+) -> None:
+    """
+    将多个模型托管在同一个Flask进程中，通过路由区分。
+
+    Args:
+        models: 模型列表，每项为 (name, model_instance) 元组
+        ip: 监听地址，默认为localhost
+        port: 服务器端口号，默认为5000
+    """
+    app = Flask(__name__)
+
+    for name, model in models:
+
+        def make_handler(m: Any) -> Any:
+            def handler() -> Dict[str, Any]:
+                payload = request.json
+                return jsonify(m.process_payload(payload))
+
+            return handler
+
+        app.add_url_rule(f"/{name}", view_func=make_handler(model), methods=["POST"])
+
+    app.run(host=ip, port=port)
 
 
 def bool_arr_to_str(arr: np.ndarray) -> str:

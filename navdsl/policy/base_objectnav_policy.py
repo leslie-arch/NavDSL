@@ -1,6 +1,7 @@
 # Copyright (c) 2023 Boston Dynamics AI Institute LLC. All rights reserved.
 
 import os
+
 # from dataclasses import dataclass, fields
 from typing import Any, Dict, List, Tuple, Union
 
@@ -36,6 +37,7 @@ class BaseObjectNavPolicy(BasePolicy):
     整合视觉语言模型和点云地图，实现目标检测和导航功能
     该类为抽象基类，需要子类实现特定方法
     """
+
     _target_object: str = ""  # 目标对象名称
     _policy_info: Dict[str, Any] = {}  # 策略信息字典，用于记录状态和可视化
     _object_masks: Union[np.ndarray, Any] = None  # 对象掩码，由_update_object_map()设置
@@ -89,17 +91,20 @@ class BaseObjectNavPolicy(BasePolicy):
             non_coco_threshold: 非COCO类别对象检测的置信度阈值
         """
         super().__init__(action_space)
-        # 初始化各种对象检测和分割模型客户端
-        self._object_detector = GroundingDINOClient(port=int(os.environ.get("GROUNDING_DINO_PORT", "12181")))
-        self._coco_object_detector = YOLOv7Client(port=int(os.environ.get("YOLOV7_PORT", "12184")))
-        self._mobile_sam = MobileSAMClient(port=int(os.environ.get("SAM_PORT", "12183")))
+        # 初始化各种对象检测和分割模型客户端（统一服务器端口）
+        _dsl_port = int(os.environ.get("DSL_SERVER_PORT", "8080"))
+        self._object_detector = GroundingDINOClient(port=_dsl_port)
+        self._coco_object_detector = YOLOv7Client(port=_dsl_port)
+        self._mobile_sam = MobileSAMClient(port=_dsl_port)
         self._use_vqa = use_vqa
         if use_vqa:
-            self._vqa = BLIP2Client(port=int(os.environ.get("BLIP2_PORT", "12185")))
+            self._vqa = BLIP2Client(port=_dsl_port)
         # 初始化点导航策略
         self._pointnav_policy = WrappedPointNavResNetPolicy(pointnav_policy_path)
         # 初始化对象点云地图
-        self._object_map: ObjectPointCloudMap = ObjectPointCloudMap(erosion_size=object_map_erosion_size)
+        self._object_map: ObjectPointCloudMap = ObjectPointCloudMap(
+            erosion_size=object_map_erosion_size
+        )
         self._depth_image_shape = tuple(depth_image_shape)
         self._pointnav_stop_radius = pointnav_stop_radius
         self._visualize = visualize
@@ -257,7 +262,9 @@ class BaseObjectNavPolicy(BasePolicy):
         """
         raise NotImplementedError  # 子类必须实现
 
-    def _get_target_object_location(self, position: np.ndarray) -> Union[None, np.ndarray]:
+    def _get_target_object_location(
+        self, position: np.ndarray
+    ) -> Union[None, np.ndarray]:
         """
         获取目标对象的位置
         如果尚未发现目标对象，则返回None
@@ -293,9 +300,13 @@ class BaseObjectNavPolicy(BasePolicy):
         # 构建基本策略信息
         policy_info = {
             "target_object": self._target_object.split("|")[0],  # 目标对象名称
-            "gps": str(self._observations_cache["robot_xy"] * np.array([1, -1])),  # GPS位置
+            "gps": str(
+                self._observations_cache["robot_xy"] * np.array([1, -1])
+            ),  # GPS位置
             "yaw": np.rad2deg(self._observations_cache["robot_heading"]),  # 朝向角度
-            "target_detected": self._object_map.has_object(self._target_object),  # 是否检测到目标
+            "target_detected": self._object_map.has_object(
+                self._target_object
+            ),  # 是否检测到目标
             "target_point_cloud": target_point_cloud,  # 目标点云
             "nav_goal": self._last_goal,  # 当前导航目标
             "stop_called": self._called_stop,  # 是否已调用停止
@@ -311,14 +322,22 @@ class BaseObjectNavPolicy(BasePolicy):
 
         # 处理深度图可视化
         annotated_depth = self._observations_cache["object_map_rgbd"][0][1] * 255
-        annotated_depth = cv2.cvtColor(annotated_depth.astype(np.uint8), cv2.COLOR_GRAY2RGB)
+        annotated_depth = cv2.cvtColor(
+            annotated_depth.astype(np.uint8), cv2.COLOR_GRAY2RGB
+        )
 
         # 如果有对象掩码，绘制轮廓
         if self._object_masks.sum() > 0:
             # 查找并绘制对象轮廓
-            contours, _ = cv2.findContours(self._object_masks, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            annotated_rgb = cv2.drawContours(detections.annotated_frame, contours, -1, (255, 0, 0), 2)
-            annotated_depth = cv2.drawContours(annotated_depth, contours, -1, (255, 0, 0), 2)
+            contours, _ = cv2.findContours(
+                self._object_masks, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+            )
+            annotated_rgb = cv2.drawContours(
+                detections.annotated_frame, contours, -1, (255, 0, 0), 2
+            )
+            annotated_depth = cv2.drawContours(
+                annotated_depth, contours, -1, (255, 0, 0), 2
+            )
         else:
             annotated_rgb = self._observations_cache["object_map_rgbd"][0][0]
 
@@ -328,7 +347,9 @@ class BaseObjectNavPolicy(BasePolicy):
 
         # 如果启用了边界计算，添加障碍物地图可视化
         if self._compute_frontiers:
-            policy_info["obstacle_map"] = cv2.cvtColor(self._obstacle_map.visualize(), cv2.COLOR_BGR2RGB)
+            policy_info["obstacle_map"] = cv2.cvtColor(
+                self._obstacle_map.visualize(), cv2.COLOR_BGR2RGB
+            )
 
         # 如果有调试信息，添加到策略信息
         if "DEBUG_INFO" in os.environ:
@@ -358,18 +379,24 @@ class BaseObjectNavPolicy(BasePolicy):
         detections = (
             self._coco_object_detector.predict(img)  # 使用YOLOv7检测COCO类别
             if has_coco
-            else self._object_detector.predict(img, caption=self._non_coco_caption)  # 使用DINO检测非COCO类别
+            else self._object_detector.predict(
+                img, caption=self._non_coco_caption
+            )  # 使用DINO检测非COCO类别
         )
         # 根据目标类别过滤检测结果
         detections.filter_by_class(target_classes)
         # 根据目标类型设置置信度阈值并过滤
-        det_conf_threshold = self._coco_threshold if has_coco else self._non_coco_threshold
+        det_conf_threshold = (
+            self._coco_threshold if has_coco else self._non_coco_threshold
+        )
         detections.filter_by_conf(det_conf_threshold)
 
         # 如果同时有COCO和非COCO类别，且未检测到，尝试使用DINO检测器
         if has_coco and has_non_coco and detections.num_detections == 0:
             # 重试使用非COCO对象检测器
-            detections = self._object_detector.predict(img, caption=self._non_coco_caption)
+            detections = self._object_detector.predict(
+                img, caption=self._non_coco_caption
+            )
             detections.filter_by_class(target_classes)
             detections.filter_by_conf(self._non_coco_threshold)
 
@@ -407,7 +434,9 @@ class BaseObjectNavPolicy(BasePolicy):
 
         # 计算到目标的距离和角度
         rho, theta = rho_theta(robot_xy, heading, goal)
-        rho_theta_tensor = torch.tensor([[rho, theta]], device="cuda", dtype=torch.float32)
+        rho_theta_tensor = torch.tensor(
+            [[rho, theta]], device="cuda", dtype=torch.float32
+        )
 
         # 构建点导航观察数据
         obs_pointnav = {
@@ -478,15 +507,21 @@ class BaseObjectNavPolicy(BasePolicy):
         # 处理每个检测到的对象
         for idx in range(len(detections.logits)):
             # 将归一化的边界框坐标转换回像素坐标
-            bbox_denorm = detections.boxes[idx] * np.array([width, height, width, height])
+            bbox_denorm = detections.boxes[idx] * np.array(
+                [width, height, width, height]
+            )
             # 使用SAM对检测到的对象进行分割
             object_mask = self._mobile_sam.segment_bbox(rgb, bbox_denorm.tolist())
 
             # 如果启用视觉问答，使用BLIP2模型验证分割结果
             if self._use_vqa:
                 # 绘制分割轮廓
-                contours, _ = cv2.findContours(object_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-                annotated_rgb = cv2.drawContours(rgb.copy(), contours, -1, (255, 0, 0), 2)
+                contours, _ = cv2.findContours(
+                    object_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+                )
+                annotated_rgb = cv2.drawContours(
+                    rgb.copy(), contours, -1, (255, 0, 0), 2
+                )
                 # 构建视觉问答问题
                 question = f"Question: {self._vqa_prompt}"
                 if not detections.phrases[idx].endswith("ing"):
@@ -503,12 +538,13 @@ class BaseObjectNavPolicy(BasePolicy):
             # 更新对象点云地图
             self._object_map.update_map(
                 self._target_object,  # 目标对象名称
-                depth,               # 深度图
-                object_mask,         # 对象分割掩码
+                depth,  # 深度图
+                object_mask,  # 对象分割掩码
                 tf_camera_to_episodic,  # 坐标变换矩阵
-                min_depth,           # 最小深度
-                max_depth,           # 最大深度
-                fx, fy,              # 相机参数
+                min_depth,  # 最小深度
+                max_depth,  # 最大深度
+                fx,
+                fy,  # 相机参数
             )
 
         # 计算相机视场角
@@ -529,7 +565,9 @@ class BaseObjectNavPolicy(BasePolicy):
         """
         raise NotImplementedError  # 子类必须实现
 
-    def _infer_depth(self, rgb: np.ndarray, min_depth: float, max_depth: float) -> np.ndarray:
+    def _infer_depth(
+        self, rgb: np.ndarray, min_depth: float, max_depth: float
+    ) -> np.ndarray:
         """Infers the depth image from the rgb image.
 
         从RGB图像推断深度图像
@@ -585,7 +623,7 @@ class BaseObjectNavPolicy(BasePolicy):
 # class DSLConfig:
 #     """
 #     视觉语言寻找模型的配置类.
-# 
+#
 #     包含导航策略所需的各种参数
 #     """
 #     name: str = "HabitatITMPolicy"  # 策略名称
@@ -605,7 +643,7 @@ class BaseObjectNavPolicy(BasePolicy):
 #     coco_threshold: float = 0.8  # COCO类别阈值
 #     non_coco_threshold: float = 0.4  # 非COCO类别阈值
 #     agent_radius: float = 0.18  # 代理半径
-# 
+#
 #     @classmethod  # type: ignore
 #     @property
 #     def kwaarg_names(cls) -> List[str]:
@@ -615,8 +653,8 @@ class BaseObjectNavPolicy(BasePolicy):
 #         """
 #         # 返回除"name"外的所有字段名
 #         return [f.name for f in fields(DSLConfig) if f.name != "name"]
-# 
-# 
+#
+#
 # # 获取配置存储实例
 # cs = ConfigStore.instance()
 # # 注册基础DSL配置

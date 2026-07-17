@@ -1,0 +1,38 @@
+# @package _global_
+
+# Benchmark: HM3D-AutoVLN graph-nav VLN task.
+# Composes the habitat base + VLNGraphNav task + HM3D-AutoVLN dataset.
+
+defaults:
+  - /habitat: habitat_config_base
+  - /navdsl/task: vln_graph_nav
+  - /habitat/simulator/sensor_setups@habitat.simulator.agents.main_agent: rgbd_agent
+  - /navdsl/dataset/vln: hm3d_autovln
+  - _self_
+
+habitat:
+  environment:
+    max_episode_steps: 20
+    iterator_options:
+      max_scene_repeat_steps: 50000
+  simulator:
+    # Use the full HM3D scene dataset (covers all ~800 train + ~100 val scans).
+    # Do NOT use `hm3d_annotated_basis` — that's only a 216-scan annotated subset
+    # and would miss most AutoVLN scans (e.g. 00000, 00799).
+    scene_dataset: "/sata/sdb7/dataset/habitat-data/versioned_data/hm3d-0.2/hm3d/hm3d_basis.scene_dataset_config.json"
+    habitat_sim_v0:
+      gpu_device_id: 0
+      allow_sliding: True
+    agents:
+      main_agent:
+        sim_sensors:
+          rgb_sensor:
+            width: 224
+            height: 224
+            hfov: 90
+          depth_sensor:
+            width: 224
+            height: 224
+            min_depth: 0.0
+            max_depth: 10.0
+            normalize_depth: True
