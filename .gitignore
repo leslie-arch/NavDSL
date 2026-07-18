@@ -15,4 +15,4 @@ __pycache__
 /.venv/
 /uv.lock
 
-!data/.gitkeep
+!checkpoints/.gitkeep
